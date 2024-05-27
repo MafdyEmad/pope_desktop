@@ -8,22 +8,37 @@ class ImageCubit extends Cubit<ImageState> {
   final FolderRepository _folder;
   ImageCubit(this._folder) : super(ImageInitial());
 
-  Future<Folder> loadFiles() async {
-    final Folder response = await _folder.explore();
-    return response;
+  Future<Folder> loadFiles(String path) async {
+    return await _folder.explore(path);
   }
 
-  Future<Folder> getAssets() async {
-    final Folder response = await _folder.explore();
-    return response;
-  }
+  // Future<Folder> getAssets(String path) async {
+  //   final Folder response = await _folder.explore(path);
+  //   return response;
+  // }
 
   Future createFolder(path) async {
     try {
-      await _folder.createFolder(path);
-      emit(ImageCreateFolder());
+      final String msg = await _folder.createFolder(path);
+      emit(ImageSuccess(msg));
     } catch (e) {
       emit(ImageFailed(e.toString()));
     }
+  }
+
+  void navigateToFolder() {
+    emit(ImageNavigateToFolder());
+  }
+
+  String getFolderPath(List folderPath) {
+    String path = '';
+    for (var file in folderPath) {
+      if (path.isEmpty) {
+        path += file;
+      } else {
+        path += '/$file';
+      }
+    }
+    return path;
   }
 }

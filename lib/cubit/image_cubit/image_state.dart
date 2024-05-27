@@ -11,9 +11,13 @@ final class ImageFailed extends ImageState {
 }
 
 final class ImageSuccess extends ImageState {
-  final Folder folder;
+  final String msg;
 
-  ImageSuccess(this.folder);
+  ImageSuccess(this.msg);
 }
 
-final class ImageCreateFolder extends ImageState {}
+final class ImageLoading extends ImageState {}
+
+final class ImageNavigateToFolder extends ImageState {
+  ImageNavigateToFolder();
+}
