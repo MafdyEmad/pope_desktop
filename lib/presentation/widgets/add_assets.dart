@@ -1,6 +1,9 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:http/http.dart';
+import 'package:pope_desktop/bloc/bloc/assets_bloc.dart';
 import 'package:pope_desktop/core/theme/app_style.dart';
 import 'package:pope_desktop/data_provider/folder_provider.dart';
 
@@ -11,8 +14,7 @@ class AddAssets extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () async {
-        FilePickerResult? file = await FilePicker.platform.pickFiles();
-        FolderProvider a = FolderProvider();
+        context.read<AssetsBloc>().add(const UploadAssetsEvent(''));
       },
       child: DottedBorder(
         strokeCap: StrokeCap.square,

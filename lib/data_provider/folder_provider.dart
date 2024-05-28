@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
 import 'package:pope_desktop/core/share/app_api.dart';
 
 class FolderProvider {
@@ -29,36 +30,25 @@ class FolderProvider {
     }
   }
 
-  Future getAssets(String path) async {
+  Future<StreamedResponse> uploadAssets({
+    required FilePickerResult filePicker,
+    required String path,
+  }) async {
     try {
-      final request = await http.post(
-        Uri.parse('${API.explore}$path'),
+      String url = '${API.uploadAsset}?path=$path';
+      final file = File(filePicker.files.single.path!);
+      final request = http.MultipartRequest('POST', Uri.parse(url));
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'file',
+          file.path,
+          filename: filePicker.files.single.name,
+        ),
       );
+
+      return await http.Client().send(request);
     } catch (e) {
-      throw "حدث خطأ";
-    }
-  }
-
-  Future<void> uploadAssets(FilePickerResult filePickerResult, String path, String type, String id,
-      Function(double) onProgress) async {
-    String url = '${API.uploadAsset}?path=$path&id=12&type=image';
-
-    final file = File(filePickerResult.files.single.path!);
-
-    final request = http.MultipartRequest('POST', Uri.parse(url));
-
-    request.files.add(
-      await http.MultipartFile.fromPath(
-        'file',
-        file.path,
-        filename: filePickerResult.files.single.name,
-      ),
-    );
-    final response = await http.Client().send(request);
-    if (response.statusCode == 200) {
-      print('File uploaded successfully');
-    } else {
-      print('File upload failed with status: ${response.statusCode}');
+      throw 'حدث خطأ';
     }
   }
 }

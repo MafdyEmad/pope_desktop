@@ -5,9 +5,9 @@ import 'package:pope_desktop/core/share/app_api.dart';
 import 'package:pope_desktop/core/share/snackbar.dart';
 import 'package:pope_desktop/core/theme/app_palette.dart';
 import 'package:pope_desktop/core/theme/app_style.dart';
-import 'package:pope_desktop/cubit/image_cubit/image_cubit.dart';
 import 'package:pope_desktop/presentation/widgets/add_assets.dart';
 import 'package:pope_desktop/presentation/widgets/create_colder.dart';
+import 'package:pope_desktop/presentation/widgets/navigation_widget.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -19,7 +19,7 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
-    context.read<AssetsBloc>().add(const LoadFoldersEvent(''));
+    context.read<AssetsBloc>().add(const LoadFoldersEvent('صور'));
     super.initState();
   }
 
@@ -39,35 +39,34 @@ class _MainScreenState extends State<MainScreen> {
           children: [
             Expanded(
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(
-                      Icons.image_outlined,
-                      size: 50,
-                    ),
+                  NavigationWidget(
+                    title: "صور",
+                    icon: Icons.image_outlined,
+                    onPressed: () {
+                      context.read<AssetsBloc>().add(const LoadFoldersEvent('صور'));
+                    },
                   ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(
-                      Icons.music_video_outlined,
-                      size: 50,
-                    ),
+                  NavigationWidget(
+                    title: "صوت",
+                    icon: Icons.music_video_outlined,
+                    onPressed: () {
+                      context.read<AssetsBloc>().add(const LoadFoldersEvent('صوت'));
+                    },
                   ),
-                  IconButton(
+                  NavigationWidget(
+                    title: "فيديو",
+                    icon: Icons.video_file_outlined,
                     onPressed: () {},
-                    icon: const Icon(
-                      Icons.video_file_outlined,
-                      size: 50,
-                    ),
                   ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(
-                      Icons.picture_as_pdf_outlined,
-                      size: 50,
-                    ),
+                  NavigationWidget(
+                    title: "pdf",
+                    icon: Icons.picture_as_pdf_outlined,
+                    onPressed: () {
+                      context.read<AssetsBloc>().add(const LoadFoldersEvent('pdf'));
+                    },
                   ),
                 ],
               ),
@@ -87,16 +86,25 @@ class _MainScreenState extends State<MainScreen> {
                           children: [
                             IconButton(
                                 onPressed: () {
-                                  context.read<AssetsBloc>().add(GoBackEvent(state.folder.path));
+                                  if (state.folder.path.split('/').length > 1) {
+                                    context.read<AssetsBloc>().add(GoBackEvent(state.folder.path));
+                                  }
                                 },
                                 icon: const Icon(
                                   Icons.arrow_back,
                                 )),
                             Text(
-                              state.folder.path.isEmpty
-                                  ? 'الصفحه الرئيسيه'
-                                  : "الصفحه الرئيسيه ${state.folder.path}",
+                              state.folder.path,
                               style: AppStyle.bodyMedium(context),
+                            ),
+                            const Spacer(),
+                            IconButton(
+                              onPressed: () {
+                                context.read<AssetsBloc>().add(LoadFoldersEvent(state.folder.path));
+                              },
+                              icon: const Icon(
+                                Icons.refresh,
+                              ),
                             ),
                           ],
                         ),
@@ -118,10 +126,31 @@ class _MainScreenState extends State<MainScreen> {
                                     path: state.folder.path,
                                   );
                                 } else if (index == state.folder.files.length + 1) {
-                                  return const AddAssets();
+                                  if (state.folder.path.isNotEmpty) {
+                                    return const AddAssets();
+                                  }
                                 } else {
                                   if (state.folder.files[index].isDirectory) {
                                     return GestureDetector(
+                                      onSecondaryTapDown: (details) {
+                                        showMenu(
+                                          color: AppPalette.foregroundColor,
+                                          context: context,
+                                          position: RelativeRect.fromLTRB(
+                                            details.globalPosition.dx,
+                                            details.globalPosition.dy,
+                                            details.globalPosition.dx + 10,
+                                            details.globalPosition.dy + 10,
+                                          ),
+                                          items: [
+                                            PopupMenuItem(
+                                              value: 'حذف',
+                                              child: const Text('حذف'),
+                                              onTap: () {},
+                                            ),
+                                          ],
+                                        );
+                                      },
                                       onTap: () {
                                         context.read<AssetsBloc>().add(LoadFoldersEvent(
                                             '${state.folder.path}/${state.folder.files[index].name}'));
@@ -144,9 +173,12 @@ class _MainScreenState extends State<MainScreen> {
                                       ),
                                     );
                                   } else {
-                                    return Image.network('${API.explore}${state.folder.files[index].name}');
+                                    return Image.network(
+                                      '${API.explore}${state.folder.path}/${state.folder.files[index].name}',
+                                    );
                                   }
                                 }
+                                return null;
                               },
                             ),
                           ),

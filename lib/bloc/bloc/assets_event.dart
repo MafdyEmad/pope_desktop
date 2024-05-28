@@ -30,3 +30,11 @@ class GoBackEvent extends AssetsEvent {
   @override
   List<Object> get props => [];
 }
+
+class UploadAssetsEvent extends AssetsEvent {
+  final String path;
+  const UploadAssetsEvent(this.path);
+
+  @override
+  List<Object> get props => [];
+}
