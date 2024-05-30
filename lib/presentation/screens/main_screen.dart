@@ -27,9 +27,10 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return BlocListener<AssetsBloc, AssetsState>(
       listener: (context, state) {
-        if (state.state == States.failed) {
+        print(state);
+        if (state.state == AssetState.failed) {
           showSnackBar(context, msg: state.msg);
-        } else if (state.state == States.success) {
+        } else if (state.state == AssetState.success) {
           showSnackBar(context, msg: state.msg);
           context.read<AssetsBloc>().add(LoadFoldersEvent(state.folder.path));
         }
@@ -75,9 +76,9 @@ class _MainScreenState extends State<MainScreen> {
               flex: 15,
               child: BlocBuilder<AssetsBloc, AssetsState>(
                 buildWhen: (previous, current) =>
-                    current.state == States.loaded || current.state == States.loading,
+                    current.state == AssetState.loaded || current.state == AssetState.loading,
                 builder: (context, state) {
-                  if (state.state == States.loaded) {
+                  if (state.state == AssetState.loaded) {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -127,7 +128,7 @@ class _MainScreenState extends State<MainScreen> {
                                   );
                                 } else if (index == state.folder.files.length + 1) {
                                   if (state.folder.path.isNotEmpty) {
-                                    return const AddAssets();
+                                    return AddAssets(path: state.folder.path);
                                   }
                                 } else {
                                   if (state.folder.files[index].isDirectory) {
@@ -174,7 +175,21 @@ class _MainScreenState extends State<MainScreen> {
                                     );
                                   } else {
                                     return Image.network(
-                                      '${API.explore}${state.folder.path}/${state.folder.files[index].name}',
+                                      '${API.explore}${state.folder.path}/${state.folder.files[index].name}', // Replace with your image URL
+                                      loadingBuilder: (BuildContext context, Widget child,
+                                          ImageChunkEvent? loadingProgress) {
+                                        if (loadingProgress == null) {
+                                          return child;
+                                        }
+                                        return Center(
+                                          child: CircularProgressIndicator(
+                                            value: loadingProgress.expectedTotalBytes != null
+                                                ? loadingProgress.cumulativeBytesLoaded /
+                                                    loadingProgress.expectedTotalBytes!
+                                                : null,
+                                          ),
+                                        );
+                                      },
                                     );
                                   }
                                 }

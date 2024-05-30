@@ -17,10 +17,19 @@ class CreateFolder extends StatefulWidget {
 
 class _CreateFolderState extends State<CreateFolder> {
   late final TextEditingController _folderName;
+  late final GlobalKey<FormState> _form;
   @override
   void initState() {
     _folderName = TextEditingController();
+    _form = GlobalKey<FormState>();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _folderName.dispose();
+
+    super.dispose();
   }
 
   @override
@@ -30,18 +39,21 @@ class _CreateFolderState extends State<CreateFolder> {
         showWindow(
           context,
           title: "اضافة مجلد",
-          content: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                "اسم المجلد",
-                style: AppStyle.bodyLarge(context),
-              ),
-              CustomTextFormField(
-                controller: _folderName,
-              )
-            ],
+          content: Form(
+            key: _form,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  "اسم المجلد",
+                  style: AppStyle.bodyLarge(context),
+                ),
+                CustomTextFormField(
+                  controller: _folderName,
+                )
+              ],
+            ),
           ),
           actions: [
             CustomButton(
@@ -54,9 +66,11 @@ class _CreateFolderState extends State<CreateFolder> {
             CustomButton(
               text: 'اضافة',
               onPressed: () async {
-                context.read<AssetsBloc>().add(CreateFolderEvent('${widget.path}/${_folderName.text}'));
-                Navigator.pop(context);
-                _folderName.clear();
+                if (_form.currentState!.validate()) {
+                  context.read<AssetsBloc>().add(CreateFolderEvent('${widget.path}/${_folderName.text}'));
+                  Navigator.pop(context);
+                  _folderName.clear();
+                }
               },
             ),
           ],

@@ -36,7 +36,7 @@ class FolderRepository {
     }
   }
 
-  Future<StreamedResponse> uploadAsserts({
+  Future uploadAsserts({
     required FilePickerResult filePicker,
     required String path,
   }) async {
@@ -44,7 +44,7 @@ class FolderRepository {
       final StreamedResponse result = await _folder.uploadAssets(filePicker: filePicker, path: path);
 
       if (result.statusCode == 200) {
-        return result;
+        return 'تم رفع الملف بنجاح';
       } else {
         throw 'حدث خطأ';
       }

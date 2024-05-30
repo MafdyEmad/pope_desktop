@@ -12,12 +12,20 @@ class CustomTextFormField extends StatelessWidget {
     return SizedBox(
       width: 500.w,
       child: TextFormField(
+        validator: (value) {
+          if (value!.isEmpty || value[0] == ' ') {
+            return "يجب كتابه اسم الملف";
+          } else {
+            return null;
+          }
+        },
         controller: controller,
         style: AppStyle.bodyLarge(context),
         cursorColor: AppPalette.primaryColor,
-        decoration: const InputDecoration(
-          border: OutlineInputBorder(borderSide: BorderSide()),
-          focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: AppPalette.primaryColor)),
+        decoration: InputDecoration(
+          errorStyle: AppStyle.bodyMedium(context).copyWith(color: Colors.red),
+          border: const OutlineInputBorder(borderSide: BorderSide()),
+          focusedBorder: const OutlineInputBorder(borderSide: BorderSide(color: AppPalette.primaryColor)),
         ),
       ),
     );

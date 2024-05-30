@@ -35,20 +35,43 @@ class FolderProvider {
     required String path,
   }) async {
     try {
-      String url = '${API.uploadAsset}?path=$path';
+      final url = Uri.parse('${API.uploadAsset}?path=$path');
       final file = File(filePicker.files.single.path!);
-      final request = http.MultipartRequest('POST', Uri.parse(url));
-      request.files.add(
-        await http.MultipartFile.fromPath(
-          'file',
-          file.path,
-          filename: filePicker.files.single.name,
-        ),
+      var request = http.MultipartRequest('POST', url);
+      var multipartFile = await http.MultipartFile.fromPath(
+        'file',
+        file.path,
       );
+      request.files.add(multipartFile);
 
-      return await http.Client().send(request);
+      return await request.send();
     } catch (e) {
       throw 'حدث خطأ';
     }
   }
+  // Future<StreamedResponse> uploadAssets({
+  //   required FilePickerResult filePicker,
+  //   required String path,
+  // }) async {
+  //   try {
+  //     String url = '${API.uploadAsset}?path=$path';
+  //     final file = File(filePicker.files.single.path!);
+  //     final request = http.MultipartRequest('POST', Uri.parse(url));
+  //     request.files.add(
+  //       await http.MultipartFile.fromPath(
+  //         'file',
+  //         file.path,
+  //         filename: filePicker.files.single.name,
+  //       ),
+  //     );
+
+  //     final a = await http.Client().send(request);
+  //     http.Client().send(request).asStream().listen((event) {
+  //       print(event);
+  //     });
+  //     return a;
+  //   } catch (e) {
+  //     throw 'حدث خطأ';
+  //   }
+  // }
 }
