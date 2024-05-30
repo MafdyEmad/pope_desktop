@@ -9,4 +9,6 @@ class AppStyle {
       Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 25.sp, color: Colors.black);
   static TextStyle bodyMedium(BuildContext context) =>
       Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 22.sp, color: Colors.black);
+  static TextStyle bodySmall(BuildContext context) =>
+      Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 18.sp, color: Colors.black);
 }

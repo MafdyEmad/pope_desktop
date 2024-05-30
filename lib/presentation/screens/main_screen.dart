@@ -7,6 +7,8 @@ import 'package:pope_desktop/core/theme/app_palette.dart';
 import 'package:pope_desktop/core/theme/app_style.dart';
 import 'package:pope_desktop/presentation/widgets/add_assets.dart';
 import 'package:pope_desktop/presentation/widgets/create_colder.dart';
+import 'package:pope_desktop/presentation/widgets/display_audio.dart';
+import 'package:pope_desktop/presentation/widgets/display_image.dart';
 import 'package:pope_desktop/presentation/widgets/navigation_widget.dart';
 
 class MainScreen extends StatefulWidget {
@@ -174,23 +176,10 @@ class _MainScreenState extends State<MainScreen> {
                                       ),
                                     );
                                   } else {
-                                    return Image.network(
-                                      '${API.explore}${state.folder.path}/${state.folder.files[index].name}', // Replace with your image URL
-                                      loadingBuilder: (BuildContext context, Widget child,
-                                          ImageChunkEvent? loadingProgress) {
-                                        if (loadingProgress == null) {
-                                          return child;
-                                        }
-                                        return Center(
-                                          child: CircularProgressIndicator(
-                                            value: loadingProgress.expectedTotalBytes != null
-                                                ? loadingProgress.cumulativeBytesLoaded /
-                                                    loadingProgress.expectedTotalBytes!
-                                                : null,
-                                          ),
-                                        );
-                                      },
-                                    );
+                                    return DisplayAudio(
+                                        imagePath: '${state.folder.path}/${state.folder.files[index].name}');
+                                    //   return DisplayImage(
+                                    //       imagePath: '${state.folder.path}/${state.folder.files[index].name}');
                                   }
                                 }
                                 return null;
