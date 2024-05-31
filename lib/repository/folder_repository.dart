@@ -52,4 +52,18 @@ class FolderRepository {
       throw e.toString();
     }
   }
+
+  Future delete({required String path, required bool isDirectory}) async {
+    try {
+      final result = await _folder.delete(path: path, isDirectory: isDirectory);
+
+      if (result.statusCode == 200) {
+        return jsonDecode(result.body)['msg'];
+      } else {
+        throw jsonDecode(result.body)['msg'];
+      }
+    } catch (e) {
+      throw 'حدث خطأ';
+    }
+  }
 }

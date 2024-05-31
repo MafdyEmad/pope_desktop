@@ -49,29 +49,16 @@ class FolderProvider {
       throw 'حدث خطأ';
     }
   }
-  // Future<StreamedResponse> uploadAssets({
-  //   required FilePickerResult filePicker,
-  //   required String path,
-  // }) async {
-  //   try {
-  //     String url = '${API.uploadAsset}?path=$path';
-  //     final file = File(filePicker.files.single.path!);
-  //     final request = http.MultipartRequest('POST', Uri.parse(url));
-  //     request.files.add(
-  //       await http.MultipartFile.fromPath(
-  //         'file',
-  //         file.path,
-  //         filename: filePicker.files.single.name,
-  //       ),
-  //     );
 
-  //     final a = await http.Client().send(request);
-  //     http.Client().send(request).asStream().listen((event) {
-  //       print(event);
-  //     });
-  //     return a;
-  //   } catch (e) {
-  //     throw 'حدث خطأ';
-  //   }
-  // }
+  Future<Response> delete({required String path, required bool isDirectory}) async {
+    try {
+      final result = await http.delete(
+        Uri.parse('${API.deleteFile}?path=$path&isDirectory=$isDirectory'),
+      );
+      print(result.body);
+      return result;
+    } catch (e) {
+      throw 'حدث خطأ';
+    }
+  }
 }

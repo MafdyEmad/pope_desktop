@@ -25,11 +25,11 @@ class AddAssets extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Icon(
-                Icons.image,
+                Icons.add,
                 size: 80,
               ),
               Text(
-                "اضافه صوره",
+                "اضافه ${path.split('/').first}",
                 style: AppStyle.bodyLarge(context),
               ),
             ],

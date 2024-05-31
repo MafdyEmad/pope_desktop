@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pope_desktop/bloc/bloc/assets_bloc.dart';
-import 'package:pope_desktop/core/share/app_api.dart';
 import 'package:pope_desktop/core/share/snackbar.dart';
 import 'package:pope_desktop/core/theme/app_palette.dart';
 import 'package:pope_desktop/core/theme/app_style.dart';
 import 'package:pope_desktop/presentation/widgets/add_assets.dart';
 import 'package:pope_desktop/presentation/widgets/create_colder.dart';
+import 'package:pope_desktop/presentation/widgets/delete_button.dart';
 import 'package:pope_desktop/presentation/widgets/display_audio.dart';
 import 'package:pope_desktop/presentation/widgets/display_image.dart';
+import 'package:pope_desktop/presentation/widgets/display_pdf.dart';
 import 'package:pope_desktop/presentation/widgets/navigation_widget.dart';
 
 class MainScreen extends StatefulWidget {
@@ -29,7 +30,6 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return BlocListener<AssetsBloc, AssetsState>(
       listener: (context, state) {
-        print(state);
         if (state.state == AssetState.failed) {
           showSnackBar(context, msg: state.msg);
         } else if (state.state == AssetState.success) {
@@ -77,10 +77,8 @@ class _MainScreenState extends State<MainScreen> {
             Expanded(
               flex: 15,
               child: BlocBuilder<AssetsBloc, AssetsState>(
-                buildWhen: (previous, current) =>
-                    current.state == AssetState.loaded || current.state == AssetState.loading,
                 builder: (context, state) {
-                  if (state.state == AssetState.loaded) {
+                  if (state.state == AssetState.loaded || state.state == AssetState.failed) {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -135,51 +133,52 @@ class _MainScreenState extends State<MainScreen> {
                                 } else {
                                   if (state.folder.files[index].isDirectory) {
                                     return GestureDetector(
-                                      onSecondaryTapDown: (details) {
-                                        showMenu(
-                                          color: AppPalette.foregroundColor,
-                                          context: context,
-                                          position: RelativeRect.fromLTRB(
-                                            details.globalPosition.dx,
-                                            details.globalPosition.dy,
-                                            details.globalPosition.dx + 10,
-                                            details.globalPosition.dy + 10,
-                                          ),
-                                          items: [
-                                            PopupMenuItem(
-                                              value: 'حذف',
-                                              child: const Text('حذف'),
-                                              onTap: () {},
-                                            ),
-                                          ],
-                                        );
-                                      },
                                       onTap: () {
                                         context.read<AssetsBloc>().add(LoadFoldersEvent(
                                             '${state.folder.path}/${state.folder.files[index].name}'));
                                       },
-                                      child: Container(
-                                        color: AppPalette.backgroundColor,
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            const Icon(
-                                              Icons.folder_outlined,
-                                              size: 80,
-                                            ),
-                                            Text(
-                                              state.folder.files[index].name,
-                                              style: AppStyle.bodyLarge(context),
-                                            )
-                                          ],
+                                      child: DeleteButton(
+                                        isDirectory: true,
+                                        path: '${state.folder.path}/${state.folder.files[index].name}',
+                                        child: Container(
+                                          color: AppPalette.backgroundColor,
+                                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              const Icon(
+                                                Icons.folder_outlined,
+                                                size: 80,
+                                              ),
+                                              Text(
+                                                state.folder.files[index].name,
+                                                style: AppStyle.bodyLarge(context),
+                                              )
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     );
                                   } else {
-                                    return DisplayAudio(
-                                        imagePath: '${state.folder.path}/${state.folder.files[index].name}');
-                                    //   return DisplayImage(
-                                    //       imagePath: '${state.folder.path}/${state.folder.files[index].name}');
+                                    final path = '${state.folder.path}/${state.folder.files[index].name}';
+                                    switch (state.folder.path.split('/').first) {
+                                      case 'صور':
+                                        return DeleteButton(
+                                          isDirectory: false,
+                                          path: path,
+                                          child: DisplayImage(imagePath: path),
+                                        );
+                                      case 'صوت':
+                                        return DeleteButton(
+                                          isDirectory: false,
+                                          path: path,
+                                          child: DisplayAudio(imagePath: path),
+                                        );
+                                      case 'pdf':
+                                        return DeleteButton(
+                                            isDirectory: false,
+                                            path: path,
+                                            child: DisplayPDF(fileName: state.folder.files[index].name));
+                                    }
                                   }
                                 }
                                 return null;

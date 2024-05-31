@@ -86,7 +86,7 @@ class _CreateFolderState extends State<CreateFolder> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Icon(
-                Icons.add,
+                Icons.folder_copy_outlined,
                 size: 80,
               ),
               Text(

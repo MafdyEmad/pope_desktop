@@ -38,3 +38,12 @@ class UploadAssetsEvent extends AssetsEvent {
   @override
   List<Object> get props => [];
 }
+
+class DeleteAssetsEvent extends AssetsEvent {
+  final String path;
+  final bool isDirectory;
+  const DeleteAssetsEvent(this.path, this.isDirectory);
+
+  @override
+  List<Object> get props => [];
+}

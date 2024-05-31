@@ -59,7 +59,7 @@ class _DisplayAudioState extends State<DisplayAudio> {
             ],
           ),
           Text(
-            widget.imagePath,
+            widget.imagePath.split('/').last,
             maxLines: 4,
             style: AppStyle.bodyMedium(context),
           )
