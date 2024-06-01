@@ -1,8 +1,10 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pope_desktop/bloc/bloc/assets_bloc.dart';
+import 'package:pope_desktop/core/share/show_dialog.dart';
 import 'package:pope_desktop/core/theme/app_palette.dart';
+import 'package:pope_desktop/core/theme/app_style.dart';
+import 'package:pope_desktop/presentation/widgets/custom_button.dart';
 
 class DeleteButton extends StatelessWidget {
   final Widget child;
@@ -28,7 +30,28 @@ class DeleteButton extends StatelessWidget {
               value: 'حذف',
               child: const Text('حذف'),
               onTap: () {
-                context.read<AssetsBloc>().add(DeleteAssetsEvent(path, isDirectory));
+                showWindow(context,
+                    title: 'حذف الملف',
+                    content: Text(
+                      'هل انت متأكد انك تريد حذف هذا الملف',
+                      style: AppStyle.bodySmall(context),
+                    ),
+                    actions: [
+                      CustomButton(
+                        text: 'حذف',
+                        isPrimary: true,
+                        onPressed: () {
+                          context.read<AssetsBloc>().add(DeleteAssetsEvent(path, isDirectory));
+                          Navigator.pop(context);
+                        },
+                      ),
+                      CustomButton(
+                          isPrimary: false,
+                          text: 'الغاء',
+                          onPressed: () {
+                            Navigator.pop(context);
+                          }),
+                    ]);
               },
             ),
           ],

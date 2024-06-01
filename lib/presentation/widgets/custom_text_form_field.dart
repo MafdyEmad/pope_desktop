@@ -13,8 +13,10 @@ class CustomTextFormField extends StatelessWidget {
       width: 500.w,
       child: TextFormField(
         validator: (value) {
-          if (value!.isEmpty || value[0] == ' ') {
+          if (value!.isEmpty) {
             return "يجب كتابه اسم الملف";
+          } else if (value[0] == ' ') {
+            return 'لا يجب ان تبدأ بمسافه';
           } else {
             return null;
           }

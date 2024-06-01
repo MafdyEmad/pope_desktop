@@ -30,19 +30,35 @@ class FolderProvider {
     }
   }
 
-  Future<StreamedResponse> uploadAssets({
+  Future<http.StreamedResponse> uploadAssets({
     required FilePickerResult filePicker,
     required String path,
+    required void Function(double) onProgress,
   }) async {
     try {
       final url = Uri.parse('${API.uploadAsset}?path=$path');
       final file = File(filePicker.files.single.path!);
-      var request = http.MultipartRequest('POST', url);
-      var multipartFile = await http.MultipartFile.fromPath(
-        'file',
-        file.path,
+      final request = http.MultipartRequest('POST', url);
+      final totalBytes = file.lengthSync();
+
+      final byteStream = file.openRead().asBroadcastStream();
+      double uploadProgress = 0;
+
+      final uploadByteStream = byteStream.transform(
+        StreamTransformer<List<int>, List<int>>.fromHandlers(
+          handleData: (data, sink) {
+            uploadProgress += data.length / totalBytes;
+            onProgress(uploadProgress);
+            sink.add(data);
+          },
+        ),
       );
-      request.files.add(multipartFile);
+      request.files.add(http.MultipartFile(
+        'file',
+        uploadByteStream,
+        totalBytes,
+        filename: file.path.split('/').last,
+      ));
 
       return await request.send();
     } catch (e) {
@@ -50,12 +66,31 @@ class FolderProvider {
     }
   }
 
+  // Future uploadAssets({
+  //   required FilePickerResult filePicker,
+  //   required String path,
+  // }) async {
+  //   try {
+  //     final url = Uri.parse('${API.uploadAsset}?path=$path');
+  //     final file = File(filePicker.files.single.path!);
+  //     var request = http.MultipartRequest('POST', url);
+  //     var multipartFile = await http.MultipartFile.fromPath(
+  //       'file',
+  //       file.path,
+  //     );
+  //     request.files.add(multipartFile);
+
+  //     return await request.send();
+  //   } catch (e) {
+  //     throw 'حدث خطأ';
+  //   }
+  // }
+
   Future<Response> delete({required String path, required bool isDirectory}) async {
     try {
       final result = await http.delete(
         Uri.parse('${API.deleteFile}?path=$path&isDirectory=$isDirectory'),
       );
-      print(result.body);
       return result;
     } catch (e) {
       throw 'حدث خطأ';

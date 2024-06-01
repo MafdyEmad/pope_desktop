@@ -9,7 +9,8 @@ part 'assets_state.dart';
 class AssetsBloc extends Bloc<AssetsEvent, AssetsState> {
   final FolderRepository _folder;
   AssetsBloc(this._folder)
-      : super(AssetsState(state: AssetState.init, msg: '', folder: Folder(path: '', files: []))) {
+      : super(
+            AssetsState(state: AssetState.init, msg: '', folder: Folder(path: '', files: []), progress: 0)) {
     on<LoadFoldersEvent>(_loadFolders);
     on<CreateFolderEvent>(_createFolder);
     on<GoBackEvent>(_goBack);
@@ -77,7 +78,11 @@ class AssetsBloc extends Bloc<AssetsEvent, AssetsState> {
     }
     emit(state.copyWith(state: AssetState.loading));
     try {
-      final msg = await _folder.uploadAsserts(filePicker: file, path: event.path);
+      final msg = await _folder.uploadAssets(
+          filePicker: file,
+          path: event.path,
+          onProgress: (value) =>
+              emit(state.copyWith(state: AssetState.progress, progress: (value * 100).toInt())));
       emit(state.copyWith(state: AssetState.success, msg: msg));
     } catch (e) {
       emit(state.copyWith(state: AssetState.failed, msg: e.toString()));

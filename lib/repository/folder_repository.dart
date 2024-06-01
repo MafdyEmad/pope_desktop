@@ -36,12 +36,14 @@ class FolderRepository {
     }
   }
 
-  Future uploadAsserts({
+  Future uploadAssets({
     required FilePickerResult filePicker,
     required String path,
+    required void Function(double) onProgress,
   }) async {
     try {
-      final StreamedResponse result = await _folder.uploadAssets(filePicker: filePicker, path: path);
+      final StreamedResponse result =
+          await _folder.uploadAssets(filePicker: filePicker, path: path, onProgress: onProgress);
 
       if (result.statusCode == 200) {
         return 'تم رفع الملف بنجاح';
