@@ -6,7 +6,7 @@ class AssetsState extends Equatable {
   final AssetState state;
   final String msg;
   final Folder folder;
-  final int progress;
+  final double progress;
 
   const AssetsState({
     required this.state,
@@ -17,7 +17,7 @@ class AssetsState extends Equatable {
 
   AssetsState copyWith({
     AssetState? state,
-    int? progress,
+    double? progress,
     String? msg,
     Folder? folder,
   }) {

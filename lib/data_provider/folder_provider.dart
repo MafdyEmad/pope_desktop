@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
@@ -18,11 +17,8 @@ class FolderProvider {
 
   Future<http.Response> createFolder(String path) async {
     try {
-      final body = jsonEncode({'path': path});
       final response = await http.post(
-        Uri.parse(API.createFolder),
-        headers: {"Content-Type": "application/json"},
-        body: body,
+        Uri.parse('${API.createFolder}?path=$path'),
       );
       return response;
     } catch (e) {

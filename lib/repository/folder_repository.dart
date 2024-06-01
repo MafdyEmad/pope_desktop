@@ -18,7 +18,7 @@ class FolderRepository {
         return Folder.fromJson(json);
       }
     } catch (e) {
-      throw e.toString();
+      throw 'حدث خطأ';
     }
   }
 

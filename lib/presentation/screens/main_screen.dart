@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pope_desktop/bloc/bloc/assets_bloc.dart';
+import 'package:pope_desktop/core/share/app_api.dart';
 import 'package:pope_desktop/core/share/snackbar.dart';
 import 'package:pope_desktop/core/theme/app_palette.dart';
 import 'package:pope_desktop/core/theme/app_style.dart';
@@ -11,6 +13,7 @@ import 'package:pope_desktop/presentation/widgets/display_audio.dart';
 import 'package:pope_desktop/presentation/widgets/display_image.dart';
 import 'package:pope_desktop/presentation/widgets/display_pdf.dart';
 import 'package:pope_desktop/presentation/widgets/navigation_widget.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -175,9 +178,17 @@ class _MainScreenState extends State<MainScreen> {
                                         );
                                       case 'pdf':
                                         return DeleteButton(
-                                            isDirectory: false,
-                                            path: path,
-                                            child: DisplayPDF(fileName: state.folder.files[index].name));
+                                          isDirectory: false,
+                                          path: path,
+                                          child: GestureDetector(
+                                            onTap: () async {
+                                              if (await canLaunchUrl(Uri.parse('${API.explore}$path'))) {
+                                                await launchUrl(Uri.parse('${API.explore}$path'));
+                                              }
+                                            },
+                                            child: DisplayPDF(fileName: state.folder.files[index].name),
+                                          ),
+                                        );
                                     }
                                   }
                                 }
@@ -186,6 +197,25 @@ class _MainScreenState extends State<MainScreen> {
                             ),
                           ),
                         ),
+                      ],
+                    );
+                  } else if (state.state == AssetState.progress) {
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'جاري رفع الملف',
+                          style: AppStyle.bodyMedium(context),
+                        ),
+                        const SizedBox(height: 20),
+                        SizedBox(
+                          height: 12,
+                          width: 150.w,
+                          child: LinearProgressIndicator(
+                            color: AppPalette.primaryColor,
+                            value: state.progress,
+                          ),
+                        )
                       ],
                     );
                   } else {

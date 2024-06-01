@@ -81,8 +81,7 @@ class AssetsBloc extends Bloc<AssetsEvent, AssetsState> {
       final msg = await _folder.uploadAssets(
           filePicker: file,
           path: event.path,
-          onProgress: (value) =>
-              emit(state.copyWith(state: AssetState.progress, progress: (value * 100).toInt())));
+          onProgress: (value) => emit(state.copyWith(state: AssetState.progress, progress: value)));
       emit(state.copyWith(state: AssetState.success, msg: msg));
     } catch (e) {
       emit(state.copyWith(state: AssetState.failed, msg: e.toString()));
