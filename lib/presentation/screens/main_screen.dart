@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pope_desktop/bloc/bloc/assets_bloc.dart';
 import 'package:pope_desktop/core/share/app_api.dart';
+import 'package:pope_desktop/core/share/show_dialog.dart';
 import 'package:pope_desktop/core/share/snackbar.dart';
 import 'package:pope_desktop/core/theme/app_palette.dart';
 import 'package:pope_desktop/core/theme/app_style.dart';
@@ -168,7 +169,19 @@ class _MainScreenState extends State<MainScreen> {
                                         return DeleteButton(
                                           isDirectory: false,
                                           path: path,
-                                          child: DisplayImage(imagePath: path),
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              showDialog(
+                                                useSafeArea: false,
+                                                context: context,
+                                                builder: (context) => AlertDialog(
+                                                  content: DisplayImage(imagePath: path),
+                                                  backgroundColor: Colors.transparent,
+                                                ),
+                                              );
+                                            },
+                                            child: DisplayImage(imagePath: path),
+                                          ),
                                         );
                                       case 'صوت':
                                         return DeleteButton(

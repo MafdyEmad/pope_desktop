@@ -9,6 +9,7 @@ class DisplayImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Image.network(
       '${API.explore}$imagePath',
+      fit: BoxFit.fill,
       loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
         if (loadingProgress == null) {
           return child;
