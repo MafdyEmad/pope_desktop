@@ -42,6 +42,15 @@ class UploadAssetsEvent extends AssetsEvent {
   List<Object> get props => [];
 }
 
+class AddSayingEvent extends AssetsEvent {
+  final String saying;
+  final FilePickerResult file;
+  const AddSayingEvent({required this.file, required this.saying});
+
+  @override
+  List<Object> get props => [];
+}
+
 class DeleteAssetsEvent extends AssetsEvent {
   final String path;
   final bool isDirectory;

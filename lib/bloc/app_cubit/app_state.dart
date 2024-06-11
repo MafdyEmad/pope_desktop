@@ -12,3 +12,7 @@ final class AppInitial extends AppState {}
 final class AppChangeRadioButton extends AppState {
   const AppChangeRadioButton();
 }
+
+final class AppAddImage extends AppState {
+  const AppAddImage();
+}

@@ -55,6 +55,25 @@ class FolderRepository {
     }
   }
 
+  Future addSaying({
+    required FilePickerResult filePicker,
+    required String saying,
+    required void Function(double) onProgress,
+  }) async {
+    try {
+      final StreamedResponse result =
+          await _folder.addSaying(filePicker: filePicker, onProgress: onProgress, saying: saying);
+
+      if (result.statusCode == 200) {
+        return 'تم رفع الملف بنجاح';
+      } else {
+        throw 'حدث خطأ';
+      }
+    } catch (e) {
+      throw e.toString();
+    }
+  }
+
   Future delete({required String path, required bool isDirectory}) async {
     try {
       final result = await _folder.delete(path: path, isDirectory: isDirectory);

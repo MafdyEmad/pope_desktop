@@ -10,4 +10,9 @@ class AppCubit extends Cubit<AppState> {
     emit(const AppChangeRadioButton());
     emit(AppInitial());
   }
+
+  void addImage() {
+    emit(const AppAddImage());
+    emit(AppInitial());
+  }
 }

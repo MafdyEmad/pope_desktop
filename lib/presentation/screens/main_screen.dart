@@ -10,6 +10,7 @@ import 'package:pope_desktop/presentation/widgets/add_assets.dart';
 import 'package:pope_desktop/presentation/widgets/create_colder.dart';
 import 'package:pope_desktop/presentation/widgets/display_asset.dart';
 import 'package:pope_desktop/presentation/widgets/display_directory.dart';
+import 'package:pope_desktop/presentation/widgets/sayings.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -96,11 +97,17 @@ class _MainScreenState extends State<MainScreen> {
                         itemBuilder: (context, index) {
                           if (index < state.folder.files.length) {
                             if (state.folder.files[index].isDirectory) {
+                              if (state.folder.path.contains('اقوال يومية')) {
+                                return const Sayings();
+                              }
                               return DisplayDirectory(state: state, index: index);
                             } else {
                               return DisplayAsset(state: state, index: index);
                             }
                           } else {
+                            if (state.folder.path.contains('اقوال يومية')) {
+                              return const Sayings();
+                            }
                             if (state.folder.directoryType == "مجلد") {
                               return CreateFolder(
                                 path: state.folder.path,

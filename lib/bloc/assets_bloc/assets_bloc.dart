@@ -19,6 +19,7 @@ class AssetsBloc extends Bloc<AssetsEvent, AssetsState> {
     on<GoBackEvent>(_goBack);
     on<UploadAssetsEvent>(_uploadAssets);
     on<DeleteAssetsEvent>(_delete);
+    on<AddSayingEvent>(_addSaying);
   }
   void _loadFolders(LoadFoldersEvent event, Emitter emit) async {
     emit(state.copyWith(state: AssetState.loading));
@@ -89,6 +90,24 @@ class AssetsBloc extends Bloc<AssetsEvent, AssetsState> {
       final msg = await _folder.uploadAssets(
           filePicker: file,
           path: event.path,
+          onProgress: (value) => emit(state.copyWith(state: AssetState.progress, progress: value)));
+      emit(state.copyWith(state: AssetState.success, msg: msg));
+    } catch (e) {
+      emit(state.copyWith(state: AssetState.failed, msg: e.toString()));
+    }
+  }
+
+  void _addSaying(AddSayingEvent event, Emitter emit) async {
+    if (!_isImage(event.file.files[0].extension.toString(), 'صور')) {
+      emit(state.copyWith(state: AssetState.failed, msg: 'يجب اختيار صور'));
+      emit(state.copyWith(state: AssetState.loaded));
+      return;
+    }
+    emit(state.copyWith(state: AssetState.loading));
+    try {
+      final msg = await _folder.addSaying(
+          saying: event.saying,
+          filePicker: event.file,
           onProgress: (value) => emit(state.copyWith(state: AssetState.progress, progress: value)));
       emit(state.copyWith(state: AssetState.success, msg: msg));
     } catch (e) {

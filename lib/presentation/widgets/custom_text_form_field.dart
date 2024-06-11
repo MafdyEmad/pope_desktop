@@ -12,6 +12,7 @@ class CustomTextFormField extends StatelessWidget {
     return SizedBox(
       width: 500.w,
       child: TextFormField(
+        maxLines: null,
         validator: (value) {
           if (value!.isEmpty) {
             return "يجب كتابه اسم الملف";

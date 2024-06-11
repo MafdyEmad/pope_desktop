@@ -72,4 +72,40 @@ class FolderProvider {
       throw 'حدث خطأ';
     }
   }
+
+  Future<http.StreamedResponse> addSaying({
+    required FilePickerResult filePicker,
+    required String saying,
+    required void Function(double) onProgress,
+  }) async {
+    try {
+      final url = Uri.parse('${API.addSaying}?path=اقوال يومية&saying$saying');
+      final file = File(filePicker.files.single.path!);
+      final request = http.MultipartRequest('POST', url);
+      final totalBytes = file.lengthSync();
+
+      final byteStream = file.openRead().asBroadcastStream();
+      double uploadProgress = 0;
+
+      final uploadByteStream = byteStream.transform(
+        StreamTransformer<List<int>, List<int>>.fromHandlers(
+          handleData: (data, sink) {
+            uploadProgress += data.length / totalBytes;
+            onProgress(uploadProgress);
+            sink.add(data);
+          },
+        ),
+      );
+      request.files.add(http.MultipartFile(
+        'file',
+        uploadByteStream,
+        totalBytes,
+        filename: file.path.split('/').last,
+      ));
+
+      return await request.send();
+    } catch (e) {
+      throw 'حدث خطأ';
+    }
+  }
 }
