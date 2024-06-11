@@ -107,6 +107,7 @@ class _MainScreenState extends State<MainScreen> {
                               );
                             } else if (state.folder.directoryType != "فيديو") {
                               return AddAssets(
+                                fileLength: state.folder.files.length,
                                 path: state.folder.path,
                                 type: state.folder.directoryType,
                               );

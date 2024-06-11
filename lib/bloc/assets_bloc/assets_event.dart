@@ -35,7 +35,8 @@ class GoBackEvent extends AssetsEvent {
 class UploadAssetsEvent extends AssetsEvent {
   final String path;
   final String type;
-  const UploadAssetsEvent(this.path, this.type);
+  final int fileLength;
+  const UploadAssetsEvent(this.path, this.type, this.fileLength);
 
   @override
   List<Object> get props => [];

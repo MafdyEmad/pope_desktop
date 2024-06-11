@@ -8,13 +8,14 @@ import 'package:pope_desktop/core/theme/app_style.dart';
 class AddAssets extends StatelessWidget {
   final String path;
   final String type;
-  const AddAssets({super.key, required this.path, required this.type});
+  final int fileLength;
+  const AddAssets({super.key, required this.path, required this.type, required this.fileLength});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () async {
-        context.read<AssetsBloc>().add(UploadAssetsEvent(path, type));
+        context.read<AssetsBloc>().add(UploadAssetsEvent(path, type, fileLength));
       },
       child: DottedBorder(
         strokeCap: StrokeCap.square,

@@ -79,6 +79,11 @@ class AssetsBloc extends Bloc<AssetsEvent, AssetsState> {
       emit(state.copyWith(state: AssetState.loaded));
       return;
     }
+    if (event.fileLength > 0 && event.type != 'صور') {
+      emit(state.copyWith(state: AssetState.failed, msg: 'لا يمكن رفع اكثر من ملف واحد'));
+      emit(state.copyWith(state: AssetState.loaded));
+      return;
+    }
     emit(state.copyWith(state: AssetState.loading));
     try {
       final msg = await _folder.uploadAssets(
