@@ -17,6 +17,7 @@ class LoadFoldersEvent extends AssetsEvent {
 
 class CreateFolderEvent extends AssetsEvent {
   final String path;
+
   const CreateFolderEvent(this.path);
 
   @override
@@ -33,7 +34,8 @@ class GoBackEvent extends AssetsEvent {
 
 class UploadAssetsEvent extends AssetsEvent {
   final String path;
-  const UploadAssetsEvent(this.path);
+  final String type;
+  const UploadAssetsEvent(this.path, this.type);
 
   @override
   List<Object> get props => [];

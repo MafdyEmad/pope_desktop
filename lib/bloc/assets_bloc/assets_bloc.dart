@@ -9,8 +9,11 @@ part 'assets_state.dart';
 class AssetsBloc extends Bloc<AssetsEvent, AssetsState> {
   final FolderRepository _folder;
   AssetsBloc(this._folder)
-      : super(
-            AssetsState(state: AssetState.init, msg: '', folder: Folder(path: '', files: []), progress: 0)) {
+      : super(AssetsState(
+            state: AssetState.init,
+            msg: '',
+            folder: Folder(path: '', files: [], directoryType: ''),
+            progress: 0)) {
     on<LoadFoldersEvent>(_loadFolders);
     on<CreateFolderEvent>(_createFolder);
     on<GoBackEvent>(_goBack);
@@ -51,17 +54,17 @@ class AssetsBloc extends Bloc<AssetsEvent, AssetsState> {
     }
   }
 
-  bool _isImage(String filePath, String file) {
+  bool _isImage(String filePath, String type) {
     final RegExp image = RegExp(r'(jpeg|jpg|gif|png)$', caseSensitive: false);
     final RegExp audio = RegExp(r'(mp3)$', caseSensitive: false);
     final RegExp pdf = RegExp(r'(pdf)$', caseSensitive: false);
-    if (file.split('/').first == 'صور') {
+    if (type == 'صور') {
       return image.hasMatch(filePath);
     }
-    if (file.split('/').first == 'صوت') {
+    if (type == 'صوت') {
       return audio.hasMatch(filePath);
     }
-    if (file.split('/').first == 'pdf') {
+    if (type == 'pdf') {
       return pdf.hasMatch(filePath);
     }
     return false;
@@ -71,8 +74,8 @@ class AssetsBloc extends Bloc<AssetsEvent, AssetsState> {
     final FilePickerResult? file = await FilePicker.platform.pickFiles();
     if (file == null) return;
 
-    if (!_isImage(file.files[0].extension.toString(), event.path)) {
-      emit(state.copyWith(state: AssetState.failed, msg: 'يجب اختيار ${event.path.split('/').first}'));
+    if (!_isImage(file.files[0].extension.toString(), event.type)) {
+      emit(state.copyWith(state: AssetState.failed, msg: 'يجب اختيار ${event.type}'));
       emit(state.copyWith(state: AssetState.loaded));
       return;
     }

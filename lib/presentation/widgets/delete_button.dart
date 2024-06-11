@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pope_desktop/bloc/bloc/assets_bloc.dart';
+import 'package:pope_desktop/bloc/assets_bloc/assets_bloc.dart';
 import 'package:pope_desktop/core/share/show_dialog.dart';
 import 'package:pope_desktop/core/theme/app_palette.dart';
 import 'package:pope_desktop/core/theme/app_style.dart';

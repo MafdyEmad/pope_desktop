@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:pope_desktop/bloc/bloc/assets_bloc.dart';
+import 'package:pope_desktop/bloc/app_cubit/app_cubit.dart';
+import 'package:pope_desktop/bloc/assets_bloc/assets_bloc.dart';
 import 'package:pope_desktop/core/theme/app_theme.dart';
 import 'package:pope_desktop/data_provider/folder_provider.dart';
 import 'package:pope_desktop/presentation/screens/main_screen.dart';
@@ -35,6 +36,7 @@ class Pope extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => AssetsBloc(FolderRepository(FolderProvider()))),
+        BlocProvider(create: (context) => AppCubit()),
       ],
       child: MaterialApp(
         localizationsDelegates: const [
