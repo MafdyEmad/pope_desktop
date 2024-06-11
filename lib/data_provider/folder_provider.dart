@@ -62,30 +62,10 @@ class FolderProvider {
     }
   }
 
-  // Future uploadAssets({
-  //   required FilePickerResult filePicker,
-  //   required String path,
-  // }) async {
-  //   try {
-  //     final url = Uri.parse('${API.uploadAsset}?path=$path');
-  //     final file = File(filePicker.files.single.path!);
-  //     var request = http.MultipartRequest('POST', url);
-  //     var multipartFile = await http.MultipartFile.fromPath(
-  //       'file',
-  //       file.path,
-  //     );
-  //     request.files.add(multipartFile);
-
-  //     return await request.send();
-  //   } catch (e) {
-  //     throw 'حدث خطأ';
-  //   }
-  // }
-
   Future<Response> delete({required String path, required bool isDirectory}) async {
     try {
       final result = await http.delete(
-        Uri.parse('${API.deleteFile}?path=$path&isDirectory=$isDirectory'),
+        Uri.parse('${API.deleteFile}?path=$path'),
       );
       return result;
     } catch (e) {
