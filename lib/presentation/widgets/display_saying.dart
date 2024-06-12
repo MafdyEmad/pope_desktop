@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:pope_desktop/bloc/assets_bloc/assets_bloc.dart';
 import 'package:pope_desktop/core/share/app_api.dart';
 import 'package:pope_desktop/core/theme/app_palette.dart';
@@ -109,9 +110,15 @@ class _DisplaySayingState extends State<DisplaySaying> {
                   ),
                   Text(
                     saying.saying,
-                    style: AppStyle.bodyMedium(context),
+                    style: AppStyle.bodySmall(context),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
+                  ),
+                  Text(
+                    widget.state.saying.rows[index].time.day == DateTime.now().day
+                        ? "اليوم"
+                        : DateFormat('dd-MM-yyyy', 'ar').format(widget.state.saying.rows[index].time),
+                    style: AppStyle.bodySmall(context),
                   ),
                 ],
               ),

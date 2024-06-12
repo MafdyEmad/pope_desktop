@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:dotted_border/dotted_border.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +8,6 @@ import 'package:intl/intl.dart';
 import 'package:pope_desktop/bloc/app_cubit/app_cubit.dart';
 import 'package:pope_desktop/bloc/assets_bloc/assets_bloc.dart';
 import 'package:pope_desktop/core/share/show_dialog.dart';
-import 'package:pope_desktop/core/theme/app_palette.dart';
 import 'package:pope_desktop/core/theme/app_style.dart';
 import 'package:pope_desktop/presentation/widgets/custom_button.dart';
 import 'package:pope_desktop/presentation/widgets/custom_text_form_field.dart';
