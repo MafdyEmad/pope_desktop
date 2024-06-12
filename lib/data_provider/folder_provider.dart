@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
@@ -76,10 +77,11 @@ class FolderProvider {
   Future<http.StreamedResponse> addSaying({
     required FilePickerResult filePicker,
     required String saying,
+    required DateTime date,
     required void Function(double) onProgress,
   }) async {
     try {
-      final url = Uri.parse('${API.addSaying}?path=اقوال يومية&saying$saying');
+      final url = Uri.parse('${API.saying}?path=اقوال يومية&saying=$saying&date=${date.toString()}');
       final file = File(filePicker.files.single.path!);
       final request = http.MultipartRequest('POST', url);
       final totalBytes = file.lengthSync();
@@ -104,6 +106,29 @@ class FolderProvider {
       ));
 
       return await request.send();
+    } catch (e) {
+      throw 'حدث خطأ';
+    }
+  }
+
+  Future<Response> getSaying() async {
+    try {
+      final result = await http.get(Uri.parse(API.saying));
+      return result;
+    } catch (e) {
+      throw 'حدث خطأ';
+    }
+  }
+
+  Future<Response> deleteSaying({required String path, required int id}) async {
+    try {
+      final result = await http.delete(
+        Uri.parse(API.saying),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({"path": path, "id": id}),
+      );
+
+      return result;
     } catch (e) {
       throw 'حدث خطأ';
     }

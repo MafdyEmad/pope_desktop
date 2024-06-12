@@ -15,4 +15,9 @@ class AppCubit extends Cubit<AppState> {
     emit(const AppAddImage());
     emit(AppInitial());
   }
+
+  void changeTime() {
+    emit(const AppChangeTime());
+    emit(AppInitial());
+  }
 }

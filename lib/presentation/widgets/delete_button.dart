@@ -10,7 +10,9 @@ class DeleteButton extends StatelessWidget {
   final Widget child;
   final String path;
   final bool isDirectory;
-  const DeleteButton({super.key, required this.child, required this.path, required this.isDirectory});
+  final void Function()? onPressed;
+  const DeleteButton(
+      {super.key, required this.child, required this.path, required this.isDirectory, this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -40,10 +42,11 @@ class DeleteButton extends StatelessWidget {
                       CustomButton(
                         text: 'حذف',
                         isPrimary: true,
-                        onPressed: () {
-                          context.read<AssetsBloc>().add(DeleteAssetsEvent(path, isDirectory));
-                          Navigator.pop(context);
-                        },
+                        onPressed: onPressed ??
+                            () {
+                              context.read<AssetsBloc>().add(DeleteAssetsEvent(path, isDirectory));
+                              Navigator.pop(context);
+                            },
                       ),
                       CustomButton(
                           isPrimary: false,

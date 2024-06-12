@@ -5,6 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 import 'package:pope_desktop/bloc/app_cubit/app_cubit.dart';
 import 'package:pope_desktop/bloc/assets_bloc/assets_bloc.dart';
 import 'package:pope_desktop/core/share/show_dialog.dart';
@@ -24,6 +25,7 @@ class _SayingsState extends State<Sayings> {
   late final TextEditingController _saying;
   late final GlobalKey<FormState> _form;
   FilePickerResult? _file;
+  DateTime _date = DateTime.now();
   @override
   void initState() {
     _saying = TextEditingController();
@@ -92,6 +94,53 @@ class _SayingsState extends State<Sayings> {
                         controller: _saying,
                       ),
                       const SizedBox(height: 10),
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: 200.w,
+                            child: TextButton(
+                              onPressed: () async {
+                                await showDatePicker(
+                                  builder: (BuildContext context, Widget? child) {
+                                    return Theme(
+                                      data: ThemeData(
+                                        colorScheme: const ColorScheme.light(
+                                          primary: Colors.blue,
+                                          onPrimary: Colors.white,
+                                          surface: Colors.white,
+                                        ),
+                                      ),
+                                      child: child!,
+                                    );
+                                  },
+                                  context: context,
+                                  firstDate: DateTime.now(),
+                                  lastDate: DateTime.now().add(const Duration(days: 30)),
+                                ).then((value) {
+                                  if (value != null) {
+                                    _date = value;
+                                    context.read<AppCubit>().changeTime();
+                                  }
+                                });
+                              },
+                              child: Text(
+                                "تاريخ النشر",
+                                style: AppStyle.bodyLarge(context),
+                              ),
+                            ),
+                          ),
+                          BlocBuilder<AppCubit, AppState>(
+                            builder: (context, state) {
+                              return Text(
+                                _date.day == DateTime.now().day
+                                    ? "اليوم"
+                                    : DateFormat('dd-MM-yyyy', 'ar').format(_date),
+                                style: AppStyle.bodyLarge(context),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
                     ],
                   );
                 },
@@ -106,13 +155,16 @@ class _SayingsState extends State<Sayings> {
                 _saying.clear();
                 _file = null;
                 Navigator.pop(context);
+                _date = DateTime.now();
               },
             ),
             CustomButton(
               text: 'اضافة',
               onPressed: () async {
                 if (_form.currentState!.validate() && _file != null) {
-                  context.read<AssetsBloc>().add(AddSayingEvent(file: _file!, saying: _saying.text));
+                  context
+                      .read<AssetsBloc>()
+                      .add(AddSayingEvent(file: _file!, saying: _saying.text, date: _date));
                   Navigator.pop(context);
                   _saying.clear();
                 } else {}
@@ -131,11 +183,11 @@ class _SayingsState extends State<Sayings> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Icon(
-                Icons.folder_copy_outlined,
+                Icons.speaker_notes,
                 size: 80,
               ),
               Text(
-                "اضافه مجلد",
+                "اضافه قول",
                 style: AppStyle.bodyLarge(context),
               ),
             ],

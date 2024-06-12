@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pope_desktop/models/folder_model.dart';
+import 'package:pope_desktop/models/saying_model.dart';
 import 'package:pope_desktop/repository/folder_repository.dart';
 part 'assets_event.dart';
 part 'assets_state.dart';
@@ -9,22 +10,28 @@ part 'assets_state.dart';
 class AssetsBloc extends Bloc<AssetsEvent, AssetsState> {
   final FolderRepository _folder;
   AssetsBloc(this._folder)
-      : super(AssetsState(
+      : super(
+          AssetsState(
             state: AssetState.init,
             msg: '',
             folder: Folder(path: '', files: [], directoryType: ''),
-            progress: 0)) {
+            progress: 0,
+            saying: Sayings(rows: []),
+          ),
+        ) {
     on<LoadFoldersEvent>(_loadFolders);
     on<CreateFolderEvent>(_createFolder);
     on<GoBackEvent>(_goBack);
     on<UploadAssetsEvent>(_uploadAssets);
     on<DeleteAssetsEvent>(_delete);
     on<AddSayingEvent>(_addSaying);
+    on<GetSayingEvent>(_getSaying);
+    on<DeleteSayingEvent>(_deleteSaying);
   }
   void _loadFolders(LoadFoldersEvent event, Emitter emit) async {
     emit(state.copyWith(state: AssetState.loading));
     try {
-      final Folder folder = await _folder.explore(event.path);
+      final folder = await _folder.explore(event.path);
       emit(state.copyWith(state: AssetState.loaded, folder: folder));
     } catch (e) {
       emit(state.copyWith(state: AssetState.failed, msg: e.toString()));
@@ -106,9 +113,30 @@ class AssetsBloc extends Bloc<AssetsEvent, AssetsState> {
     emit(state.copyWith(state: AssetState.loading));
     try {
       final msg = await _folder.addSaying(
+          date: event.date,
           saying: event.saying,
           filePicker: event.file,
           onProgress: (value) => emit(state.copyWith(state: AssetState.progress, progress: value)));
+      emit(state.copyWith(state: AssetState.success, msg: msg));
+    } catch (e) {
+      emit(state.copyWith(state: AssetState.failed, msg: e.toString()));
+    }
+  }
+
+  void _getSaying(GetSayingEvent event, Emitter emit) async {
+    emit(state.copyWith(state: AssetState.loading));
+    try {
+      final saying = await _folder.getSaying();
+      emit(state.copyWith(state: AssetState.loaded, saying: saying));
+    } catch (e) {
+      emit(state.copyWith(state: AssetState.failed, msg: e.toString()));
+    }
+  }
+
+  void _deleteSaying(DeleteSayingEvent event, Emitter emit) async {
+    emit(state.copyWith(state: AssetState.loading));
+    try {
+      final msg = await _folder.deleteSaying(path: event.path, id: event.id);
       emit(state.copyWith(state: AssetState.success, msg: msg));
     } catch (e) {
       emit(state.copyWith(state: AssetState.failed, msg: e.toString()));

@@ -16,3 +16,7 @@ final class AppChangeRadioButton extends AppState {
 final class AppAddImage extends AppState {
   const AppAddImage();
 }
+
+final class AppChangeTime extends AppState {
+  const AppChangeTime();
+}

@@ -10,7 +10,7 @@ import 'package:pope_desktop/presentation/widgets/add_assets.dart';
 import 'package:pope_desktop/presentation/widgets/create_colder.dart';
 import 'package:pope_desktop/presentation/widgets/display_asset.dart';
 import 'package:pope_desktop/presentation/widgets/display_directory.dart';
-import 'package:pope_desktop/presentation/widgets/sayings.dart';
+import 'package:pope_desktop/presentation/widgets/display_saying.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -23,6 +23,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     context.read<AssetsBloc>().add(const LoadFoldersEvent(''));
+
     super.initState();
   }
 
@@ -84,46 +85,42 @@ class _MainScreenState extends State<MainScreen> {
                     child: Container(
                       padding: const EdgeInsets.all(12),
                       color: AppPalette.foregroundColor,
-                      child: GridView.builder(
-                        itemCount: state.folder.path.isEmpty
-                            ? state.folder.files.length
-                            : state.folder.files.length + 1,
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 5,
-                          crossAxisSpacing: 10,
-                          childAspectRatio: 1,
-                          mainAxisSpacing: 10,
-                        ),
-                        itemBuilder: (context, index) {
-                          if (index < state.folder.files.length) {
-                            if (state.folder.files[index].isDirectory) {
-                              if (state.folder.path.contains('اقوال يومية')) {
-                                return const Sayings();
-                              }
-                              return DisplayDirectory(state: state, index: index);
-                            } else {
-                              return DisplayAsset(state: state, index: index);
-                            }
-                          } else {
-                            if (state.folder.path.contains('اقوال يومية')) {
-                              return const Sayings();
-                            }
-                            if (state.folder.directoryType == "مجلد") {
-                              return CreateFolder(
-                                path: state.folder.path,
-                              );
-                            } else if (state.folder.directoryType != "فيديو") {
-                              return AddAssets(
-                                fileLength: state.folder.files.length,
-                                path: state.folder.path,
-                                type: state.folder.directoryType,
-                              );
-                            } else {
-                              return Container();
-                            }
-                          }
-                        },
-                      ),
+                      child: state.folder.path.contains('اقوال يومية')
+                          ? DisplaySaying(state: state)
+                          : GridView.builder(
+                              itemCount: state.folder.path.isEmpty
+                                  ? state.folder.files.length
+                                  : state.folder.files.length + 1,
+                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 5,
+                                crossAxisSpacing: 10,
+                                childAspectRatio: 1,
+                                mainAxisSpacing: 10,
+                              ),
+                              itemBuilder: (context, index) {
+                                if (index < state.folder.files.length) {
+                                  if (state.folder.files[index].isDirectory) {
+                                    return DisplayDirectory(state: state, index: index);
+                                  } else {
+                                    return DisplayAsset(state: state, index: index);
+                                  }
+                                } else {
+                                  if (state.folder.directoryType == "مجلد") {
+                                    return CreateFolder(
+                                      path: state.folder.path,
+                                    );
+                                  } else if (state.folder.directoryType != "فيديو") {
+                                    return AddAssets(
+                                      fileLength: state.folder.files.length,
+                                      path: state.folder.path,
+                                      type: state.folder.directoryType,
+                                    );
+                                  } else {
+                                    return Container();
+                                  }
+                                }
+                              },
+                            ),
                     ),
                   ),
                 ],

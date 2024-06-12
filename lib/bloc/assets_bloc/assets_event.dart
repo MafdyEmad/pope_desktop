@@ -45,7 +45,24 @@ class UploadAssetsEvent extends AssetsEvent {
 class AddSayingEvent extends AssetsEvent {
   final String saying;
   final FilePickerResult file;
-  const AddSayingEvent({required this.file, required this.saying});
+  final DateTime date;
+  const AddSayingEvent({required this.file, required this.saying, required this.date});
+
+  @override
+  List<Object> get props => [];
+}
+
+class GetSayingEvent extends AssetsEvent {
+  const GetSayingEvent();
+
+  @override
+  List<Object> get props => [];
+}
+
+class DeleteSayingEvent extends AssetsEvent {
+  final int id;
+  final String path;
+  const DeleteSayingEvent({required this.id, required this.path});
 
   @override
   List<Object> get props => [];

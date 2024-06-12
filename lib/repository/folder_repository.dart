@@ -3,6 +3,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart';
 import 'package:pope_desktop/data_provider/folder_provider.dart';
 import 'package:pope_desktop/models/folder_model.dart';
+import 'package:pope_desktop/models/saying_model.dart';
 
 class FolderRepository {
   final FolderProvider _folder;
@@ -58,12 +59,12 @@ class FolderRepository {
   Future addSaying({
     required FilePickerResult filePicker,
     required String saying,
+    required DateTime date,
     required void Function(double) onProgress,
   }) async {
     try {
       final StreamedResponse result =
-          await _folder.addSaying(filePicker: filePicker, onProgress: onProgress, saying: saying);
-
+          await _folder.addSaying(filePicker: filePicker, onProgress: onProgress, saying: saying, date: date);
       if (result.statusCode == 200) {
         return 'تم رفع الملف بنجاح';
       } else {
@@ -78,6 +79,34 @@ class FolderRepository {
     try {
       final result = await _folder.delete(path: path, isDirectory: isDirectory);
 
+      if (result.statusCode == 200) {
+        return jsonDecode(result.body)['msg'];
+      } else {
+        throw jsonDecode(result.body)['msg'];
+      }
+    } catch (e) {
+      throw 'حدث خطأ';
+    }
+  }
+
+  Future<Sayings> getSaying() async {
+    try {
+      final result = await _folder.getSaying();
+
+      if (result.statusCode == 200) {
+        return Sayings.fromJson(jsonDecode(result.body));
+      } else {
+        throw jsonDecode(result.body)['msg'];
+      }
+    } catch (e) {
+      throw 'حدث خطأ';
+    }
+  }
+
+  Future deleteSaying({required String path, required int id}) async {
+    try {
+      final result = await _folder.deleteSaying(path: path, id: id);
+      print(result.statusCode);
       if (result.statusCode == 200) {
         return jsonDecode(result.body)['msg'];
       } else {

@@ -7,12 +7,14 @@ class AssetsState extends Equatable {
   final String msg;
   final Folder folder;
   final double progress;
+  final Sayings saying;
 
   const AssetsState({
     required this.state,
     required this.msg,
     required this.folder,
     required this.progress,
+    required this.saying,
   });
 
   AssetsState copyWith({
@@ -20,12 +22,14 @@ class AssetsState extends Equatable {
     double? progress,
     String? msg,
     Folder? folder,
+    Sayings? saying,
   }) {
     return AssetsState(
       state: state ?? this.state,
       progress: progress ?? this.progress,
       msg: msg ?? this.msg,
       folder: folder ?? this.folder,
+      saying: saying ?? this.saying,
     );
   }
 
