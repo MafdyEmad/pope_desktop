@@ -5,6 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:pope_desktop/core/share/app_api.dart';
+import 'package:pope_desktop/core/utile/enums.dart';
 
 class FolderProvider {
   Future<http.Response> explore(String path) async {
@@ -16,10 +17,12 @@ class FolderProvider {
     }
   }
 
-  Future<http.Response> createFolder(String path) async {
+  Future<http.Response> createFolder(String path, FilesType type) async {
     try {
       final response = await http.post(
         Uri.parse('${API.createFolder}?path=$path'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({"path": path, "type": type.index}),
       );
       return response;
     } catch (e) {
@@ -128,6 +131,39 @@ class FolderProvider {
         body: jsonEncode({"path": path, "id": id}),
       );
 
+      return result;
+    } catch (e) {
+      throw 'حدث خطأ';
+    }
+  }
+
+  Future<Response> getVideos(String path) async {
+    try {
+      final result = await http.get(Uri.parse("${API.videos}?path=$path"));
+      return result;
+    } catch (e) {
+      throw 'حدث خطأ';
+    }
+  }
+
+  Future<Response> addVideos({required String path, required String link}) async {
+    try {
+      final result = await http.post(
+        Uri.parse(API.videos),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({"path": path, "link": link}),
+      );
+      return result;
+    } catch (e) {
+      throw 'حدث خطأ';
+    }
+  }
+
+  Future<Response> deleteVideos({required int id}) async {
+    try {
+      final result = await http.delete(
+        Uri.parse("${API.videos}$id"),
+      );
       return result;
     } catch (e) {
       throw 'حدث خطأ';

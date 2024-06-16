@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pope_desktop/bloc/assets_bloc/assets_bloc.dart';
@@ -18,11 +17,11 @@ class DisplayDirectory extends StatelessWidget {
       onTap: () {
         context
             .read<AssetsBloc>()
-            .add(LoadFoldersEvent('${state.folder.path}/${state.folder.files[index].realName}'));
+            .add(LoadFoldersEvent('${state.folder.path}/${state.folder.files[index].name}'));
       },
       child: DeleteButton(
         isDirectory: true,
-        path: '${state.folder.path}/${state.folder.files[index].realName}',
+        path: '${state.folder.path}/${state.folder.files[index].name}',
         child: Container(
           color: AppPalette.backgroundColor,
           child: Column(
@@ -33,7 +32,7 @@ class DisplayDirectory extends StatelessWidget {
                 size: 80,
               ),
               Text(
-                state.folder.files[index].displayName,
+                state.folder.files[index].name,
                 style: AppStyle.bodyLarge(context),
               )
             ],

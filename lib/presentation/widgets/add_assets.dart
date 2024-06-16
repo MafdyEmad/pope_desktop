@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pope_desktop/bloc/assets_bloc/assets_bloc.dart';
 import 'package:pope_desktop/core/theme/app_style.dart';
+import 'package:pope_desktop/core/utile/enums.dart';
+import 'package:pope_desktop/core/utile/extensions.dart';
 
 class AddAssets extends StatelessWidget {
   final String path;
-  final String type;
+  final FilesType type;
   final int fileLength;
   const AddAssets({super.key, required this.path, required this.type, required this.fileLength});
 
@@ -31,7 +33,7 @@ class AddAssets extends StatelessWidget {
                 size: 80,
               ),
               Text(
-                "اضافه $type",
+                "اضافه ${type.getName}",
                 style: AppStyle.bodyLarge(context),
               ),
             ],

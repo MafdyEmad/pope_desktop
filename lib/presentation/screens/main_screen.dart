@@ -5,12 +5,14 @@ import 'package:pope_desktop/bloc/assets_bloc/assets_bloc.dart';
 import 'package:pope_desktop/core/share/snackbar.dart';
 import 'package:pope_desktop/core/theme/app_palette.dart';
 import 'package:pope_desktop/core/theme/app_style.dart';
+import 'package:pope_desktop/core/utile/enums.dart';
 import 'package:pope_desktop/core/utile/extensions.dart';
 import 'package:pope_desktop/presentation/widgets/add_assets.dart';
 import 'package:pope_desktop/presentation/widgets/create_colder.dart';
 import 'package:pope_desktop/presentation/widgets/display_asset.dart';
 import 'package:pope_desktop/presentation/widgets/display_directory.dart';
 import 'package:pope_desktop/presentation/widgets/display_saying.dart';
+import 'package:pope_desktop/presentation/widgets/display_video.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -87,40 +89,43 @@ class _MainScreenState extends State<MainScreen> {
                       color: AppPalette.foregroundColor,
                       child: state.folder.path.contains('اقوال يومية')
                           ? DisplaySaying(state: state)
-                          : GridView.builder(
-                              itemCount: state.folder.path.isEmpty
-                                  ? state.folder.files.length
-                                  : state.folder.files.length + 1,
-                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 5,
-                                crossAxisSpacing: 10,
-                                childAspectRatio: 1,
-                                mainAxisSpacing: 10,
-                              ),
-                              itemBuilder: (context, index) {
-                                if (index < state.folder.files.length) {
-                                  if (state.folder.files[index].isDirectory) {
-                                    return DisplayDirectory(state: state, index: index);
-                                  } else {
-                                    return DisplayAsset(state: state, index: index);
-                                  }
-                                } else {
-                                  if (state.folder.directoryType == "مجلد") {
-                                    return CreateFolder(
-                                      path: state.folder.path,
-                                    );
-                                  } else if (state.folder.directoryType != "فيديو") {
+                          : state.folder.config.type == FilesType.video
+                              ? DisplayVideo(state: state)
+                              : GridView.builder(
+                                  itemCount: state.folder.path.isEmpty
+                                      ? state.folder.files.length
+                                      : state.folder.files.length + 1,
+                                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 5,
+                                    crossAxisSpacing: 10,
+                                    childAspectRatio: 1,
+                                    mainAxisSpacing: 10,
+                                  ),
+                                  itemBuilder: (context, index) {
+                                    if (index < state.folder.files.length) {
+                                      if (state.folder.files[index].isDirectory) {
+                                        return DisplayDirectory(state: state, index: index);
+                                      } else {
+                                        return DisplayAsset(state: state, index: index);
+                                      }
+                                    }
+                                    if (state.folder.config.type == FilesType.video) {
+                                      return DisplayVideo(state: state);
+                                    }
+
+                                    if (state.folder.config.type == FilesType.folder) {
+                                      return CreateFolder(
+                                        path: state.folder.path,
+                                      );
+                                    }
+
                                     return AddAssets(
                                       fileLength: state.folder.files.length,
                                       path: state.folder.path,
-                                      type: state.folder.directoryType,
+                                      type: state.folder.config.type,
                                     );
-                                  } else {
-                                    return Container();
-                                  }
-                                }
-                              },
-                            ),
+                                  },
+                                ),
                     ),
                   ),
                 ],
@@ -134,12 +139,14 @@ class _MainScreenState extends State<MainScreen> {
                     style: AppStyle.bodyMedium(context),
                   ),
                   const SizedBox(height: 20),
-                  SizedBox(
-                    height: 12,
-                    width: 150.w,
-                    child: LinearProgressIndicator(
-                      color: AppPalette.primaryColor,
-                      value: state.progress,
+                  Center(
+                    child: SizedBox(
+                      height: 12,
+                      width: 150.w,
+                      child: LinearProgressIndicator(
+                        color: AppPalette.primaryColor,
+                        value: state.progress,
+                      ),
                     ),
                   )
                 ],

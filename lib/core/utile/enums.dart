@@ -1,1 +1,1 @@
-enum FilesType { image, audio, video, folder, pdf }
+enum FilesType { folder, image, audio, video, pdf }

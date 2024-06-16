@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart';
+import 'package:pope_desktop/core/utile/enums.dart';
 import 'package:pope_desktop/data_provider/folder_provider.dart';
 import 'package:pope_desktop/models/folder_model.dart';
 import 'package:pope_desktop/models/saying_model.dart';
+import 'package:pope_desktop/models/video_model.dart';
 
 class FolderRepository {
   final FolderProvider _folder;
@@ -23,9 +25,9 @@ class FolderRepository {
     }
   }
 
-  Future createFolder(String path) async {
+  Future createFolder(String path, FilesType type) async {
     try {
-      final result = await _folder.createFolder(path);
+      final result = await _folder.createFolder(path, type);
       final json = jsonDecode(result.body);
       if (result.statusCode != 200) {
         throw json['msg'];
@@ -106,7 +108,47 @@ class FolderRepository {
   Future deleteSaying({required String path, required int id}) async {
     try {
       final result = await _folder.deleteSaying(path: path, id: id);
-      print(result.statusCode);
+      if (result.statusCode == 200) {
+        return jsonDecode(result.body)['msg'];
+      } else {
+        throw jsonDecode(result.body)['msg'];
+      }
+    } catch (e) {
+      throw 'حدث خطأ';
+    }
+  }
+
+  Future<List<Video>> getVideos(String path) async {
+    try {
+      final result = await _folder.getVideos(path);
+      if (result.statusCode == 200) {
+        List<dynamic> jsonList = jsonDecode(result.body);
+        List<Video> videos = jsonList.map((json) => Video.fromJson(json)).toList();
+        return videos;
+      } else {
+        throw jsonDecode(result.body)['msg'];
+      }
+    } catch (e) {
+      throw 'حدث خطأ';
+    }
+  }
+
+  Future addVideos({required String path, required String link}) async {
+    try {
+      final result = await _folder.addVideos(path: path, link: link);
+      if (result.statusCode == 200) {
+        return jsonDecode(result.body)['msg'];
+      } else {
+        throw jsonDecode(result.body)['msg'];
+      }
+    } catch (e) {
+      throw 'حدث خطأ';
+    }
+  }
+
+  Future deleteVideos({required int id}) async {
+    try {
+      final result = await _folder.deleteVideos(id: id);
       if (result.statusCode == 200) {
         return jsonDecode(result.body)['msg'];
       } else {

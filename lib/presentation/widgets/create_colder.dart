@@ -159,23 +159,7 @@ class _CreateFolderState extends State<CreateFolder> {
               onPressed: () async {
                 if (_form.currentState!.validate()) {
                   String fullPath = "${widget.path}/${_folderName.text}";
-                  switch (fileType) {
-                    case FilesType.folder:
-                      break;
-                    case FilesType.image:
-                      fullPath += "\$%صور";
-                      break;
-                    case FilesType.audio:
-                      fullPath += "\$%صوت";
-                      break;
-                    case FilesType.video:
-                      fullPath += "\$%فيديو";
-                      break;
-                    case FilesType.pdf:
-                      fullPath += "\$%pdf";
-                      break;
-                  }
-                  context.read<AssetsBloc>().add(CreateFolderEvent(fullPath));
+                  context.read<AssetsBloc>().add(CreateFolderEvent(fullPath, fileType));
                   Navigator.pop(context);
                   _folderName.clear();
                 }

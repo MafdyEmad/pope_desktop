@@ -6,4 +6,5 @@ class API {
   static const String uploadAsset = '${_base}upload_asset/';
   static const String deleteFile = '${_base}asset/';
   static const String saying = '${_base}sayings/';
+  static const String videos = '${_base}link/';
 }

@@ -8,6 +8,7 @@ class AssetsState extends Equatable {
   final Folder folder;
   final double progress;
   final Sayings saying;
+  final List<Video> video;
 
   const AssetsState({
     required this.state,
@@ -15,6 +16,7 @@ class AssetsState extends Equatable {
     required this.folder,
     required this.progress,
     required this.saying,
+    required this.video,
   });
 
   AssetsState copyWith({
@@ -23,6 +25,7 @@ class AssetsState extends Equatable {
     String? msg,
     Folder? folder,
     Sayings? saying,
+    List<Video>? video,
   }) {
     return AssetsState(
       state: state ?? this.state,
@@ -30,9 +33,10 @@ class AssetsState extends Equatable {
       msg: msg ?? this.msg,
       folder: folder ?? this.folder,
       saying: saying ?? this.saying,
+      video: video ?? this.video,
     );
   }
 
   @override
-  List<Object> get props => [state, msg, folder, progress];
+  List<Object> get props => [state, msg, folder, progress, video, saying];
 }

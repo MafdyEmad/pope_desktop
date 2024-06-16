@@ -1,8 +1,12 @@
 import 'package:equatable/equatable.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pope_desktop/core/utile/enums.dart';
+import 'package:pope_desktop/core/utile/extensions.dart';
+import 'package:pope_desktop/models/config_model.dart';
 import 'package:pope_desktop/models/folder_model.dart';
 import 'package:pope_desktop/models/saying_model.dart';
+import 'package:pope_desktop/models/video_model.dart';
 import 'package:pope_desktop/repository/folder_repository.dart';
 part 'assets_event.dart';
 part 'assets_state.dart';
@@ -14,9 +18,10 @@ class AssetsBloc extends Bloc<AssetsEvent, AssetsState> {
           AssetsState(
             state: AssetState.init,
             msg: '',
-            folder: Folder(path: '', files: [], directoryType: ''),
+            folder: Folder(path: '', files: [], config: Config(type: FilesType.folder)),
             progress: 0,
             saying: Sayings(rows: []),
+            video: const [],
           ),
         ) {
     on<LoadFoldersEvent>(_loadFolders);
@@ -27,6 +32,10 @@ class AssetsBloc extends Bloc<AssetsEvent, AssetsState> {
     on<AddSayingEvent>(_addSaying);
     on<GetSayingEvent>(_getSaying);
     on<DeleteSayingEvent>(_deleteSaying);
+    on<GetVideosEvent>(_getVideos);
+    on<AddVideosEvent>(_addVideos);
+    on<DeleteVideosEvent>(_deleteVideos);
+    on<ShowErrorEvent>(_showError);
   }
   void _loadFolders(LoadFoldersEvent event, Emitter emit) async {
     emit(state.copyWith(state: AssetState.loading));
@@ -41,7 +50,7 @@ class AssetsBloc extends Bloc<AssetsEvent, AssetsState> {
   void _createFolder(CreateFolderEvent event, Emitter emit) async {
     emit(state.copyWith(state: AssetState.loading));
     try {
-      final String msg = await _folder.createFolder(event.path);
+      final String msg = await _folder.createFolder(event.path, event.type);
       emit(state.copyWith(state: AssetState.success, msg: msg));
     } catch (e) {
       emit(state.copyWith(state: AssetState.failed, msg: e.toString()));
@@ -62,17 +71,17 @@ class AssetsBloc extends Bloc<AssetsEvent, AssetsState> {
     }
   }
 
-  bool _isImage(String filePath, String type) {
+  bool _isImage(String filePath, FilesType type) {
     final RegExp image = RegExp(r'(jpeg|jpg|gif|png)$', caseSensitive: false);
     final RegExp audio = RegExp(r'(mp3)$', caseSensitive: false);
     final RegExp pdf = RegExp(r'(pdf)$', caseSensitive: false);
-    if (type == 'صور') {
+    if (type == FilesType.image) {
       return image.hasMatch(filePath);
     }
-    if (type == 'صوت') {
+    if (type == FilesType.audio) {
       return audio.hasMatch(filePath);
     }
-    if (type == 'pdf') {
+    if (type == FilesType.pdf) {
       return pdf.hasMatch(filePath);
     }
     return false;
@@ -83,11 +92,11 @@ class AssetsBloc extends Bloc<AssetsEvent, AssetsState> {
     if (file == null) return;
 
     if (!_isImage(file.files[0].extension.toString(), event.type)) {
-      emit(state.copyWith(state: AssetState.failed, msg: 'يجب اختيار ${event.type}'));
+      emit(state.copyWith(state: AssetState.failed, msg: 'يجب اختيار ${event.type.getName}'));
       emit(state.copyWith(state: AssetState.loaded));
       return;
     }
-    if (event.fileLength > 0 && event.type != 'صور') {
+    if (event.fileLength > 0 && event.type != FilesType.image) {
       emit(state.copyWith(state: AssetState.failed, msg: 'لا يمكن رفع اكثر من ملف واحد'));
       emit(state.copyWith(state: AssetState.loaded));
       return;
@@ -105,7 +114,7 @@ class AssetsBloc extends Bloc<AssetsEvent, AssetsState> {
   }
 
   void _addSaying(AddSayingEvent event, Emitter emit) async {
-    if (!_isImage(event.file.files[0].extension.toString(), 'صور')) {
+    if (!_isImage(event.file.files[0].extension.toString(), FilesType.image)) {
       emit(state.copyWith(state: AssetState.failed, msg: 'يجب اختيار صور'));
       emit(state.copyWith(state: AssetState.loaded));
       return;
@@ -151,5 +160,41 @@ class AssetsBloc extends Bloc<AssetsEvent, AssetsState> {
     } catch (e) {
       emit(state.copyWith(state: AssetState.failed, msg: e.toString()));
     }
+  }
+
+  void _getVideos(GetVideosEvent event, Emitter emit) async {
+    emit(state.copyWith(state: AssetState.loading));
+    try {
+      final video = await _folder.getVideos(event.path);
+      emit(state.copyWith(state: AssetState.loaded, video: video));
+    } catch (e) {
+      emit(state.copyWith(state: AssetState.failed, msg: e.toString()));
+    }
+  }
+
+  void _addVideos(AddVideosEvent event, Emitter emit) async {
+    emit(state.copyWith(state: AssetState.loading));
+    try {
+      final msg = await _folder.addVideos(path: event.path, link: event.link);
+      emit(state.copyWith(state: AssetState.loaded, msg: msg));
+    } catch (e) {
+      emit(state.copyWith(state: AssetState.failed, msg: e.toString()));
+    }
+  }
+
+  void _deleteVideos(DeleteVideosEvent event, Emitter emit) async {
+    emit(state.copyWith(state: AssetState.loading));
+    try {
+      final msg = await _folder.deleteVideos(
+        id: event.id,
+      );
+      emit(state.copyWith(state: AssetState.loaded, msg: msg));
+    } catch (e) {
+      emit(state.copyWith(state: AssetState.failed, msg: e.toString()));
+    }
+  }
+
+  void _showError(ShowErrorEvent event, Emitter emit) async {
+    emit(state.copyWith(state: AssetState.failed, msg: event.error));
   }
 }

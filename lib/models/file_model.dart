@@ -1,14 +1,15 @@
 class File {
-  final String realName;
-  final String displayName;
+  final String name;
   final bool isDirectory;
 
-  File({required this.displayName, required this.isDirectory, required this.realName});
+  File({
+    required this.name,
+    required this.isDirectory,
+  });
 
   factory File.fromJson(Map<String, dynamic> jsonData) {
     return File(
-      realName: jsonData['realName'],
-      displayName: jsonData['displayName'],
+      name: jsonData['name'],
       isDirectory: jsonData['isDirectory'],
     );
   }
