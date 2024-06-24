@@ -130,7 +130,6 @@ class FolderProvider {
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({"path": path, "id": id}),
       );
-
       return result;
     } catch (e) {
       throw 'حدث خطأ';

@@ -151,8 +151,10 @@ class _MainScreenState extends State<MainScreen> {
                   )
                 ],
               );
-            } else {
+            } else if (state.state == AssetState.loading) {
               return const Center(child: CircularProgressIndicator());
+            } else {
+              return Container();
             }
           },
         ),

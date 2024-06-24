@@ -133,10 +133,9 @@ class AssetsBloc extends Bloc<AssetsEvent, AssetsState> {
   }
 
   void _getSaying(GetSayingEvent event, Emitter emit) async {
-    emit(state.copyWith(state: AssetState.loading));
     try {
       final saying = await _folder.getSaying();
-      emit(state.copyWith(state: AssetState.loaded, saying: saying));
+      emit(state.copyWith(saying: saying));
     } catch (e) {
       emit(state.copyWith(state: AssetState.failed, msg: e.toString()));
     }
@@ -163,10 +162,9 @@ class AssetsBloc extends Bloc<AssetsEvent, AssetsState> {
   }
 
   void _getVideos(GetVideosEvent event, Emitter emit) async {
-    emit(state.copyWith(state: AssetState.loading));
     try {
       final video = await _folder.getVideos(event.path);
-      emit(state.copyWith(state: AssetState.loaded, video: video));
+      emit(state.copyWith(video: video));
     } catch (e) {
       emit(state.copyWith(state: AssetState.failed, msg: e.toString()));
     }

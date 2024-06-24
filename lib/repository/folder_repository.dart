@@ -94,7 +94,6 @@ class FolderRepository {
   Future<Sayings> getSaying() async {
     try {
       final result = await _folder.getSaying();
-
       if (result.statusCode == 200) {
         return Sayings.fromJson(jsonDecode(result.body));
       } else {
@@ -108,6 +107,7 @@ class FolderRepository {
   Future deleteSaying({required String path, required int id}) async {
     try {
       final result = await _folder.deleteSaying(path: path, id: id);
+
       if (result.statusCode == 200) {
         return jsonDecode(result.body)['msg'];
       } else {

@@ -21,6 +21,7 @@ class _DisplaySayingState extends State<DisplaySaying> {
   @override
   void initState() {
     context.read<AssetsBloc>().add(const GetSayingEvent());
+
     super.initState();
   }
 
