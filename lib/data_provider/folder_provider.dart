@@ -116,7 +116,7 @@ class FolderProvider {
 
   Future<Response> getSaying() async {
     try {
-      final result = await http.get(Uri.parse(API.saying));
+      final result = await http.get(Uri.parse(API.sayingServer));
       return result;
     } catch (e) {
       throw 'حدث خطأ';

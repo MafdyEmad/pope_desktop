@@ -18,6 +18,9 @@ class DeleteButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onSecondaryTapDown: (details) {
+        if (path.split('/').length == 2) {
+          return;
+        }
         showMenu(
           color: AppPalette.foregroundColor,
           context: context,
