@@ -138,6 +138,10 @@ class _MainScreenState extends State<MainScreen> {
                     'جاري رفع الملف',
                     style: AppStyle.bodyMedium(context),
                   ),
+                  Text(
+                    '${state.progress.index + 1} من ${state.progress.total}',
+                    style: AppStyle.bodyMedium(context),
+                  ),
                   const SizedBox(height: 20),
                   Center(
                     child: SizedBox(
@@ -145,7 +149,7 @@ class _MainScreenState extends State<MainScreen> {
                       width: 150.w,
                       child: LinearProgressIndicator(
                         color: AppPalette.primaryColor,
-                        value: state.progress,
+                        value: state.progress.progress,
                       ),
                     ),
                   )

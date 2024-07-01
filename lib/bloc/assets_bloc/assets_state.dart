@@ -6,7 +6,7 @@ class AssetsState extends Equatable {
   final AssetState state;
   final String msg;
   final Folder folder;
-  final double progress;
+  final Progress progress;
   final Sayings saying;
   final List<Video> video;
 
@@ -21,7 +21,7 @@ class AssetsState extends Equatable {
 
   AssetsState copyWith({
     AssetState? state,
-    double? progress,
+    Progress? progress,
     String? msg,
     Folder? folder,
     Sayings? saying,

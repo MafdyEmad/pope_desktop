@@ -42,17 +42,10 @@ class FolderRepository {
   Future uploadAssets({
     required FilePickerResult filePicker,
     required String path,
-    required void Function(double) onProgress,
+    required void Function(double, int, int) onProgress,
   }) async {
     try {
-      final StreamedResponse result =
-          await _folder.uploadAssets(filePicker: filePicker, path: path, onProgress: onProgress);
-
-      if (result.statusCode == 200) {
-        return 'تم رفع الملف بنجاح';
-      } else {
-        throw 'حدث خطأ';
-      }
+      await _folder.uploadAssets(filePicker: filePicker, path: path, onProgress: onProgress);
     } catch (e) {
       throw e.toString();
     }
@@ -107,7 +100,6 @@ class FolderRepository {
   Future deleteSaying({required String path, required int id}) async {
     try {
       final result = await _folder.deleteSaying(path: path, id: id);
-
       if (result.statusCode == 200) {
         return jsonDecode(result.body)['msg'];
       } else {

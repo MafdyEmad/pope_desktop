@@ -30,37 +30,38 @@ class FolderProvider {
     }
   }
 
-  Future<http.StreamedResponse> uploadAssets({
+  Future uploadAssets({
     required FilePickerResult filePicker,
     required String path,
-    required void Function(double) onProgress,
+    required void Function(double, int, int) onProgress,
   }) async {
     try {
-      final url = Uri.parse('${API.uploadAsset}?path=$path');
-      final file = File(filePicker.files.single.path!);
-      final request = http.MultipartRequest('POST', url);
-      final totalBytes = file.lengthSync();
+      for (int i = 0; i < filePicker.files.length; i++) {
+        final file = File(filePicker.files[i].path!);
+        final totalBytes = file.lengthSync();
+        final url = Uri.parse('${API.uploadAsset}?path=$path');
+        final request = http.MultipartRequest('POST', url);
+        final byteStream = file.openRead().asBroadcastStream();
+        double uploadProgress = 0;
 
-      final byteStream = file.openRead().asBroadcastStream();
-      double uploadProgress = 0;
+        final uploadByteStream = byteStream.transform(
+          StreamTransformer<List<int>, List<int>>.fromHandlers(
+            handleData: (data, sink) {
+              uploadProgress += data.length / totalBytes;
+              onProgress(uploadProgress, filePicker.files.length, i);
+              sink.add(data);
+            },
+          ),
+        );
+        request.files.add(http.MultipartFile(
+          'file',
+          uploadByteStream,
+          totalBytes,
+          filename: file.path.split('/').last,
+        ));
 
-      final uploadByteStream = byteStream.transform(
-        StreamTransformer<List<int>, List<int>>.fromHandlers(
-          handleData: (data, sink) {
-            uploadProgress += data.length / totalBytes;
-            onProgress(uploadProgress);
-            sink.add(data);
-          },
-        ),
-      );
-      request.files.add(http.MultipartFile(
-        'file',
-        uploadByteStream,
-        totalBytes,
-        filename: file.path.split('/').last,
-      ));
-
-      return await request.send();
+        await request.send();
+      }
     } catch (e) {
       throw 'حدث خطأ';
     }

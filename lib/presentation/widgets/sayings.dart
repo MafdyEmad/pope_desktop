@@ -71,13 +71,13 @@ class _SayingsState extends State<Sayings> {
                           child: CustomButton(
                             text: 'اضافة صوره',
                             onPressed: () async {
-                              final RegExp image = RegExp(r'(jpeg|jpg|gif|png)$', caseSensitive: true);
-                              await FilePicker.platform.pickFiles().then((value) {
+                              await FilePicker.platform.pickFiles(
+                                  allowMultiple: true,
+                                  type: FileType.custom,
+                                  allowedExtensions: ['jpeg', 'jpg' 'gif', 'png']).then((value) {
                                 if (value != null) {
-                                  if (image.hasMatch(value.files.first.extension.toString())) {
-                                    _file = value;
-                                    context.read<AppCubit>().addImage();
-                                  }
+                                  _file = value;
+                                  context.read<AppCubit>().addImage();
                                 }
                               });
                             },
