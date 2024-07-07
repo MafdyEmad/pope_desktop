@@ -46,6 +46,7 @@ class Pope extends StatelessWidget {
         ],
         supportedLocales: const [Locale('ar')],
         theme: lightTheme,
+        title: 'pope117 admin',
         locale: const Locale('ar'),
         home: const MainScreen(),
       ),

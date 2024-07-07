@@ -71,10 +71,11 @@ class _SayingsState extends State<Sayings> {
                           child: CustomButton(
                             text: 'اضافة صوره',
                             onPressed: () async {
-                              await FilePicker.platform.pickFiles(
-                                  allowMultiple: true,
-                                  type: FileType.custom,
-                                  allowedExtensions: ['jpeg', 'jpg' 'gif', 'png']).then((value) {
+                              await FilePicker.platform
+                                  .pickFiles(
+                                type: FileType.image,
+                              )
+                                  .then((value) {
                                 if (value != null) {
                                   _file = value;
                                   context.read<AppCubit>().addImage();
