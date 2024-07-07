@@ -74,12 +74,12 @@ class AssetsBloc extends Bloc<AssetsEvent, AssetsState> {
   void _uploadAssets(UploadAssetsEvent event, Emitter emit) async {
     final FilePickerResult? file = await FilePicker.platform.pickFiles(
       allowMultiple: true,
-      type: FileType.custom,
-      allowedExtensions: event.type == FilesType.image
-          ? ['jpeg', 'jpg' 'gif', 'png']
+      type: event.type == FilesType.image
+          ? FileType.image
           : event.type == FilesType.audio
-              ? ['mp3']
-              : ['pdf'],
+              ? FileType.audio
+              : FileType.custom,
+      allowedExtensions: event.type == FilesType.pdf ? ['pdf'] : null,
     );
     if (file == null) return;
     try {
