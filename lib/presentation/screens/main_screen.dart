@@ -139,7 +139,7 @@ class _MainScreenState extends State<MainScreen> {
                     style: AppStyle.bodyMedium(context),
                   ),
                   Text(
-                    '${state.progress.index + 1} من ${state.progress.total}',
+                    '${state.progress.index} من ${state.progress.total}',
                     style: AppStyle.bodyMedium(context),
                   ),
                   const SizedBox(height: 20),
