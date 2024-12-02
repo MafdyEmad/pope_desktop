@@ -12,7 +12,7 @@ class LoadFoldersEvent extends AssetsEvent {
   const LoadFoldersEvent(this.path);
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [path];
 }
 
 class CreateFolderEvent extends AssetsEvent {
@@ -22,7 +22,7 @@ class CreateFolderEvent extends AssetsEvent {
   const CreateFolderEvent(this.path, this.type);
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [path, type];
 }
 
 class GoBackEvent extends AssetsEvent {
@@ -30,7 +30,7 @@ class GoBackEvent extends AssetsEvent {
   const GoBackEvent(this.path);
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [path];
 }
 
 class UploadAssetsEvent extends AssetsEvent {
@@ -40,7 +40,7 @@ class UploadAssetsEvent extends AssetsEvent {
   const UploadAssetsEvent(this.path, this.type, this.fileLength);
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [path, type, fileLength];
 }
 
 class AddSayingEvent extends AssetsEvent {
@@ -50,7 +50,7 @@ class AddSayingEvent extends AssetsEvent {
   const AddSayingEvent({required this.file, required this.saying, required this.date});
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [saying, file, date];
 }
 
 class GetSayingEvent extends AssetsEvent {
@@ -66,7 +66,7 @@ class DeleteSayingEvent extends AssetsEvent {
   const DeleteSayingEvent({required this.id, required this.path});
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [id, path];
 }
 
 class DeleteAssetsEvent extends AssetsEvent {
@@ -75,7 +75,7 @@ class DeleteAssetsEvent extends AssetsEvent {
   const DeleteAssetsEvent(this.path, this.isDirectory);
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [path, isDirectory];
 }
 
 class GetVideosEvent extends AssetsEvent {
@@ -83,7 +83,7 @@ class GetVideosEvent extends AssetsEvent {
   const GetVideosEvent(this.path);
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [path];
 }
 
 class AddVideosEvent extends AssetsEvent {
@@ -93,7 +93,7 @@ class AddVideosEvent extends AssetsEvent {
   const AddVideosEvent(this.path, this.link);
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [path, link];
 }
 
 class DeleteVideosEvent extends AssetsEvent {
@@ -102,7 +102,7 @@ class DeleteVideosEvent extends AssetsEvent {
   const DeleteVideosEvent(this.id);
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [id];
 }
 
 class ShowErrorEvent extends AssetsEvent {
@@ -111,5 +111,5 @@ class ShowErrorEvent extends AssetsEvent {
   const ShowErrorEvent(this.error);
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [error];
 }

@@ -44,10 +44,18 @@ class _DisplayVideoState extends State<DisplayVideo> {
     super.dispose();
   }
 
+  // Future<Playlist?> getVideoDetails() async {
+  //   try {
+  //     return await yt.playlists.get(widget.state.video[0].link);
+  //   } catch (e) {
+  //     return null;
+  //   }
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Align(
-      alignment: Alignment.topRight,
+      alignment: widget.state.video.isNotEmpty ? Alignment.center : Alignment.topRight,
       child: SizedBox(
         width: widget.state.video.length != 1 ? 200.w : 400.w,
         height: widget.state.video.length != 1 ? 200.h : 400.h,
@@ -85,25 +93,27 @@ class _DisplayVideoState extends State<DisplayVideo> {
                         text: 'الغاء',
                         isPrimary: false,
                         onPressed: () {
-                          _link.clear();
                           Navigator.pop(context);
+                          _link.clear();
                         },
                       ),
                       CustomButton(
                         text: 'اضافة',
                         onPressed: () async {
                           try {
-                            Navigator.pop(context);
-                            await yt.videos.get(_link.text).then((video) {
-                              context
-                                  .read<AssetsBloc>()
-                                  .add(AddVideosEvent(widget.state.folder.path, _link.text));
-                              _link.clear();
-                            });
-                          } catch (e) {
-                            context.read<AssetsBloc>().add(ShowErrorEvent("لينك يوتيوب خطأ"));
+                            context
+                                .read<AssetsBloc>()
+                                .add(AddVideosEvent(widget.state.folder.path, _link.text));
                             Navigator.pop(context);
                             _link.clear();
+                            // await yt.videos.get(_link.text).then((video) {
+                            //   context
+                            //       .read<AssetsBloc>()
+                            //       .add(AddVideosEvent(widget.state.folder.path, _link.text));
+                            //   _link.clear();
+                            // });
+                          } catch (e) {
+                            context.read<AssetsBloc>().add(const ShowErrorEvent("لينك يوتيوب خطأ"));
                           }
                         },
                       ),
@@ -131,56 +141,52 @@ class _DisplayVideoState extends State<DisplayVideo> {
                     ),
                   ),
                 ))
-            : FutureBuilder(
-                future: yt.videos.get(widget.state.video[0].link),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return GestureDetector(
-                      onTap: () async {
-                        if (await canLaunchUrl(Uri.parse(widget.state.video[0].link))) {
-                          launchUrl(Uri.parse(widget.state.video[0].link));
-                        }
-                      },
-                      child: DeleteButton(
-                        path: widget.state.video[0].link,
-                        isDirectory: false,
-                        onPressed: () {
-                          context.read<AssetsBloc>().add(DeleteVideosEvent(widget.state.video[0].id));
-                          Navigator.pop(context);
-                        },
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.network(
-                              snapshot.data!.thumbnails.highResUrl,
-                            ),
-                            Text(
-                              snapshot.data!.title,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: AppStyle.bodyMedium(context),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  }
-                  if (snapshot.hasError) {
-                    return Center(
-                      child: Text(
-                        "حدث خطأ",
-                        style: AppStyle.bodyLarge(context),
-                      ),
-                    );
-                  }
-                  return const Center(
-                    child: CircularProgressIndicator(
-                      color: AppPalette.primaryColor,
-                    ),
-                  );
+            : DeleteButton(
+                path: widget.state.video[0].link,
+                isDirectory: false,
+                onPressed: () {
+                  context.read<AssetsBloc>().add(DeleteVideosEvent(widget.state.video[0].id));
+                  Navigator.pop(context);
                 },
+                child: Center(
+                  child: TextButton(
+                    onPressed: () async {
+                      if (await canLaunchUrl(Uri.parse(widget.state.video[0].link))) {
+                        launchUrl(Uri.parse(widget.state.video[0].link));
+                      }
+                    },
+                    child: Text(
+                      widget.state.video.first.link,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppStyle.bodyMedium(context),
+                    ),
+                  ),
+                ),
               ),
+        // : Center(
+        //     child: FutureBuilder(
+        //       future: getVideoDetails(),
+        //       builder: (context, snapshot) {
+        //         if (snapshot.hasData) {
+        //           return
+        //         }
+        //         if (snapshot.hasError) {
+        //           return Center(
+        //             child: Text(
+        //               "حدث خطأ",
+        //               style: AppStyle.bodyLarge(context),
+        //             ),
+        //           );
+        //         }
+        //         return const Center(
+        //           child: CircularProgressIndicator(
+        //             color: AppPalette.primaryColor,
+        //           ),
+        //         );
+        //       },
+        //     ),
+        //   ),
       ),
     );
   }
