@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:pope_desktop/core/theme/app_palette.dart';
-import 'package:pope_desktop/core/theme/app_style.dart';
+import 'package:pope_desktop/core-old/theme/app_palette.dart';
+import 'package:pope_desktop/core-old/theme/app_style.dart';
 
 class CustomTextFormField extends StatelessWidget {
   final TextEditingController controller;

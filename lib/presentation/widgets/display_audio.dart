@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
-import 'package:pope_desktop/core/share/app_api.dart';
-import 'package:pope_desktop/core/theme/app_style.dart';
+import 'package:pope_desktop/core-old/share/app_api.dart';
+import 'package:pope_desktop/core-old/theme/app_style.dart';
 
 class DisplayAudio extends StatefulWidget {
   final String imagePath;

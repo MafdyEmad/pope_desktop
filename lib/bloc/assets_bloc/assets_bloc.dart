@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pope_desktop/core/utile/enums.dart';
+import 'package:pope_desktop/core-old/utile/enums.dart';
 import 'package:pope_desktop/models/config_model.dart';
 import 'package:pope_desktop/models/folder_model.dart';
 import 'package:pope_desktop/models/progress_model.dart';

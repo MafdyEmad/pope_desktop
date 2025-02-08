@@ -4,8 +4,8 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
-import 'package:pope_desktop/core/share/app_api.dart';
-import 'package:pope_desktop/core/utile/enums.dart';
+import 'package:pope_desktop/core-old/share/app_api.dart';
+import 'package:pope_desktop/core-old/utile/enums.dart';
 
 class FolderProvider {
   Future<http.Response> explore(String path) async {

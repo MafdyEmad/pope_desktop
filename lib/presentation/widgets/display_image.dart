@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pope_desktop/core/share/app_api.dart';
+import 'package:pope_desktop/core-old/share/app_api.dart';
 
 class DisplayImage extends StatelessWidget {
   final String imagePath;

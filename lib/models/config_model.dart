@@ -1,4 +1,4 @@
-import 'package:pope_desktop/core/utile/enums.dart'; // Import your enums file
+import 'package:pope_desktop/core-old/utile/enums.dart'; // Import your enums file
 
 class Config {
   final FilesType type;

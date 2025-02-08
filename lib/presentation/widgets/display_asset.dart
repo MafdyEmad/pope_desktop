@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pope_desktop/bloc/assets_bloc/assets_bloc.dart';
-import 'package:pope_desktop/core/share/app_api.dart';
-import 'package:pope_desktop/core/utile/enums.dart';
+import 'package:pope_desktop/core-old/share/app_api.dart';
+import 'package:pope_desktop/core-old/utile/enums.dart';
 import 'package:pope_desktop/presentation/widgets/delete_button.dart';
 import 'package:pope_desktop/presentation/widgets/display_audio.dart';
 import 'package:pope_desktop/presentation/widgets/display_image.dart';
