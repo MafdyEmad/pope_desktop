@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pope_desktop/core/config/app_palette.dart';
+import 'package:pope_desktop/core/util/enums.dart';
 import 'package:pope_desktop/core/util/extensions.dart';
 import 'package:pope_desktop/core/util/snackbar.dart';
 import 'package:pope_desktop/core/widgets/fail.dart';
 import 'package:pope_desktop/core/widgets/loading.dart';
 import 'package:pope_desktop/features/explorer/presentaion/bloc/explorer_bloc.dart';
-
-enum FileType { folder, image, video, audio, pdf }
+import 'package:pope_desktop/features/media/presentaion/screens/pdf_screen.dart';
 
 class ExplorerScreen extends StatefulWidget {
   const ExplorerScreen({super.key});
@@ -33,7 +33,7 @@ class _ExplorerScreenState extends State<ExplorerScreen> {
     'اقوال مصورة',
     'اقوال يومية',
   ];
-  FileType selectedType = FileType.folder;
+  MediaType selectedType = MediaType.folder;
   void _changeType(type, setState) {
     selectedType = type;
     setState(() {});
@@ -71,7 +71,8 @@ class _ExplorerScreenState extends State<ExplorerScreen> {
       },
       builder: (context, state) {
         return Scaffold(
-          floatingActionButton: state is ExplorerInitial
+          floatingActionButton: state is ExplorerInitial ||
+                  (state is ExplorerExploreSuccess && state.folder.folderType != MediaType.folder.name)
               ? null
               : FloatingActionButton(
                   onPressed: () {
@@ -115,7 +116,7 @@ class _ExplorerScreenState extends State<ExplorerScreen> {
                                       child: Column(
                                         children: [
                                           RadioListTile(
-                                            value: FileType.folder,
+                                            value: MediaType.folder,
                                             groupValue: selectedType,
                                             onChanged: (value) {
                                               _changeType(value, setState);
@@ -126,7 +127,7 @@ class _ExplorerScreenState extends State<ExplorerScreen> {
                                             ),
                                           ),
                                           RadioListTile(
-                                            value: FileType.image,
+                                            value: MediaType.image,
                                             groupValue: selectedType,
                                             onChanged: (value) {
                                               _changeType(value, setState);
@@ -143,7 +144,7 @@ class _ExplorerScreenState extends State<ExplorerScreen> {
                                       child: Column(
                                         children: [
                                           RadioListTile(
-                                            value: FileType.video,
+                                            value: MediaType.video,
                                             groupValue: selectedType,
                                             onChanged: (value) {
                                               _changeType(value, setState);
@@ -154,7 +155,7 @@ class _ExplorerScreenState extends State<ExplorerScreen> {
                                             ),
                                           ),
                                           RadioListTile(
-                                            value: FileType.audio,
+                                            value: MediaType.audio,
                                             groupValue: selectedType,
                                             onChanged: (value) {
                                               _changeType(value, setState);
@@ -169,7 +170,7 @@ class _ExplorerScreenState extends State<ExplorerScreen> {
                                     ),
                                     Expanded(
                                       child: RadioListTile(
-                                        value: FileType.pdf,
+                                        value: MediaType.pdf,
                                         groupValue: selectedType,
                                         onChanged: (value) {
                                           _changeType(value, setState);
@@ -218,7 +219,7 @@ class _ExplorerScreenState extends State<ExplorerScreen> {
                       ),
                     ).then((_) {
                       _fileNameController.clear();
-                      selectedType = FileType.folder;
+                      selectedType = MediaType.folder;
                     });
                   },
                   child: const Icon(
@@ -285,6 +286,13 @@ class _ExplorerScreenState extends State<ExplorerScreen> {
             }
             if (state is ExplorerExploreSuccess) {
               final content = state.folder.folderContent;
+              if (state.folder.folderType == MediaType.pdf.name) {
+                return PdfScreen(
+                  folderContent: content,
+                  path: state.folder.folderPath,
+                  folderId: state.folder.folderId,
+                );
+              }
               if (content.isEmpty) {
                 return Center(
                   child: Text(
