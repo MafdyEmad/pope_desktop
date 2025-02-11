@@ -3,6 +3,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:pope_desktop/core/error/Server_exception.dart';
 import 'package:pope_desktop/core/error/failure.dart';
 import 'package:pope_desktop/core/services/api_services.dart';
+import 'package:pope_desktop/core/util/constants.dart';
 
 class MediaRemoteDataSource {
   Future<Either<Failure, void>> uploadAsset(
@@ -13,6 +14,17 @@ class MediaRemoteDataSource {
     try {
       await ApiServices.uploadAsset(
           filePicker: filePicker, path: path, folderId: folderId, onProgress: onProgress);
+      return right(null);
+    } on ServerException catch (e) {
+      return left(Failure(message: e.message));
+    }
+  }
+
+  Future<Either<Failure, void>> deleteFile({
+    required String folderId,
+  }) async {
+    try {
+      await ApiServices.delete(url: Constants.deleteFile + folderId);
       return right(null);
     } on ServerException catch (e) {
       return left(Failure(message: e.message));

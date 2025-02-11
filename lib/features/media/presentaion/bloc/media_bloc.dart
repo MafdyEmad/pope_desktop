@@ -12,6 +12,7 @@ class MediaBloc extends Bloc<MediaEvent, MediaState> {
       : _mediaRemoteDataSource = mediaRemoteDataSource,
         super(MediaInitial()) {
     on<UploadMedia>(_uploadMedia);
+    on<DeleteMedia>(_deleteMedial);
   }
   void _uploadMedia(UploadMedia event, Emitter emit) async {
     final result = await _mediaRemoteDataSource.uploadAsset(
@@ -19,9 +20,19 @@ class MediaBloc extends Bloc<MediaEvent, MediaState> {
       path: event.path,
       folderId: event.folderId,
       onProgress: (progress, total, index) {
-        emit(MediaUploading(progress: Progress(progress: progress, total: total, index: index)));
+        print(progress);
+        // emit(MediaUploading(progress: Progress(progress: progress, total: total, index: index)));
       },
     );
+
+    result.fold(
+      (error) => emit(MediaUpLoadingFail(message: error.message)),
+      (_) => emit(MediaUpLoadingUpSuccess()),
+    );
+  }
+
+  void _deleteMedial(DeleteMedia event, Emitter emit) async {
+    final result = await _mediaRemoteDataSource.deleteFile(folderId: event.id);
 
     result.fold(
       (error) => emit(MediaUpLoadingFail(message: error.message)),

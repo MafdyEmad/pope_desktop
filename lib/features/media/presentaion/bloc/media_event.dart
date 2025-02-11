@@ -21,3 +21,12 @@ final class UploadMedia extends MediaEvent {
   @override
   List<Object> get props => [];
 }
+
+final class DeleteMedia extends MediaEvent {
+  final String id;
+
+  const DeleteMedia({required this.id});
+
+  @override
+  List<Object> get props => [];
+}
