@@ -7,6 +7,12 @@ sealed class MediaEvent extends Equatable {
   List<Object> get props => [];
 }
 
+final class AddYoutubeLink extends MediaEvent {
+  final String link;
+  final String path;
+  const AddYoutubeLink(this.link, this.path);
+}
+
 final class UploadMedia extends MediaEvent {
   final FilePickerResult filePicker;
   final String path;
@@ -24,8 +30,9 @@ final class UploadMedia extends MediaEvent {
 
 final class DeleteMedia extends MediaEvent {
   final String id;
+  final bool isLink;
 
-  const DeleteMedia({required this.id});
+  const DeleteMedia({required this.id, this.isLink = false});
 
   @override
   List<Object> get props => [];

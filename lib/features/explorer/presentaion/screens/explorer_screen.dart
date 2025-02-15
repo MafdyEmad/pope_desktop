@@ -10,7 +10,8 @@ import 'package:pope_desktop/core/util/snackbar.dart';
 import 'package:pope_desktop/core/widgets/fail.dart';
 import 'package:pope_desktop/core/widgets/loading.dart';
 import 'package:pope_desktop/features/explorer/presentaion/bloc/explorer_bloc.dart';
-import 'package:pope_desktop/features/media/presentaion/screens/pdf_screen.dart';
+import 'package:pope_desktop/features/media/presentaion/screens/media_screen.dart';
+import 'package:pope_desktop/features/sayings/ui/screens/sayings_screen.dart';
 
 class ExplorerScreen extends StatefulWidget {
   const ExplorerScreen({super.key});
@@ -247,7 +248,7 @@ class _ExplorerScreenState extends State<ExplorerScreen> {
                   size: 25,
                 )),
             title: Text(
-              state is ExplorerExploreSuccess ? state.folder.folderPath : '',
+              state is ExplorerExploreSuccess ? state.folder.folderPath.removeBaseRoute : '',
               style: context.theme.textTheme.headlineLarge,
             ),
             actions: [
@@ -270,6 +271,11 @@ class _ExplorerScreenState extends State<ExplorerScreen> {
                   return ListTile(
                     minTileHeight: 80,
                     onTap: () {
+                      if (index == folders.length - 1) {
+                        Navigator.push(
+                            context, MaterialPageRoute(builder: (context) => const SayingsScreen()));
+                        return;
+                      }
                       context.read<ExplorerBloc>().add(ExploreEvent(folderPath: folders[index]));
                     },
                     leading: Icon(
@@ -286,12 +292,15 @@ class _ExplorerScreenState extends State<ExplorerScreen> {
             }
             if (state is ExplorerExploreSuccess) {
               final content = state.folder.folderContent;
-              if (state.folder.folderType == MediaType.pdf.name) {
-                return PdfScreen(
-                  folderContent: content,
-                  path: state.folder.folderPath,
-                  folderId: state.folder.folderId,
-                );
+              print(state.folder.folderType.toLowerCase());
+              if (state.folder.folderType != MediaType.folder.name) {
+                return MediaScreen(
+                    folderContent: content,
+                    path: state.folder.folderPath,
+                    folderId: state.folder.folderId,
+                    type: MediaType.values.firstWhere(
+                      (e) => e.name.toLowerCase() == state.folder.folderType.toLowerCase(),
+                    ));
               }
               if (content.isEmpty) {
                 return Center(
@@ -308,10 +317,10 @@ class _ExplorerScreenState extends State<ExplorerScreen> {
                 ),
                 itemBuilder: (BuildContext context, int index) {
                   return ListTile(
-                    subtitle: Text(
-                      content[index].type.typeName,
-                      style: context.theme.textTheme.headlineSmall,
-                    ),
+                    // subtitle: Text(
+                    //   state.folder.folderType,
+                    //   style: context.theme.textTheme.headlineSmall,
+                    // ),
                     trailing: IconButton(
                       onPressed: () {
                         showDialog(

@@ -13,27 +13,38 @@ class MediaBloc extends Bloc<MediaEvent, MediaState> {
         super(MediaInitial()) {
     on<UploadMedia>(_uploadMedia);
     on<DeleteMedia>(_deleteMedial);
+    on<AddYoutubeLink>(_addYoutubeLink);
   }
+
   void _uploadMedia(UploadMedia event, Emitter emit) async {
     final result = await _mediaRemoteDataSource.uploadAsset(
       filePicker: event.filePicker,
       path: event.path,
       folderId: event.folderId,
       onProgress: (progress, total, index) {
-        print(progress);
-        // emit(MediaUploading(progress: Progress(progress: progress, total: total, index: index)));
+        emit(MediaUploading(progress: Progress(progress: progress, total: total, index: index)));
       },
     );
-
     result.fold(
       (error) => emit(MediaUpLoadingFail(message: error.message)),
       (_) => emit(MediaUpLoadingUpSuccess()),
     );
   }
 
-  void _deleteMedial(DeleteMedia event, Emitter emit) async {
-    final result = await _mediaRemoteDataSource.deleteFile(folderId: event.id);
+  void _addYoutubeLink(AddYoutubeLink event, Emitter emit) async {
+    emit(UploadLinkLoading());
+    final result = await _mediaRemoteDataSource.addYoutubeLink(
+      youtubeLink: event.link,
+      folderPath: event.path,
+    );
+    result.fold(
+      (error) => emit(UploadLinkFail(message: error.message)),
+      (_) => emit(UploadLinkSuccess()),
+    );
+  }
 
+  void _deleteMedial(DeleteMedia event, Emitter emit) async {
+    final result = await _mediaRemoteDataSource.deleteFile(folderId: event.id, isLink: event.isLink);
     result.fold(
       (error) => emit(MediaUpLoadingFail(message: error.message)),
       (_) => emit(MediaUpLoadingUpSuccess()),

@@ -8,10 +8,10 @@ class FolderContent {
 
   factory FolderContent.fromJson(Map<String, dynamic> json) {
     return FolderContent(
-      id: json['id'] as String,
-      path: json['path'] as String,
-      name: json['name'] as String,
-      type: json['type'] as String,
+      id: json['id'] ?? '',
+      path: json['path'] ?? '',
+      name: json['name'] ?? '',
+      type: json['type'] ?? '',
     );
   }
 }

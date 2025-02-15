@@ -5,6 +5,7 @@ import 'package:pope_desktop/core/di/dependency_injection.dart';
 import 'package:pope_desktop/core/routing/app_router.dart';
 import 'package:pope_desktop/features/explorer/presentaion/bloc/explorer_bloc.dart';
 import 'package:pope_desktop/features/media/presentaion/bloc/media_bloc.dart';
+import 'package:pope_desktop/features/sayings/ui/bloc/saying_bloc.dart';
 import 'package:pope_desktop/pope.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -28,6 +29,9 @@ void main() async {
       ),
       BlocProvider<MediaBloc>.value(
         value: getIt<MediaBloc>(),
+      ),
+      BlocProvider<SayingBloc>.value(
+        value: getIt<SayingBloc>(),
       )
     ],
     child: ScreenUtilInit(

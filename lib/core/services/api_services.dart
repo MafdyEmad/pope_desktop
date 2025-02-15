@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:pope_desktop/core/error/Server_exception.dart';
@@ -10,6 +10,22 @@ import 'package:mime/mime.dart';
 import 'package:http_parser/http_parser.dart';
 
 class ApiServices {
+  final Dio _dio;
+
+  ApiServices({required Dio dio}) : _dio = dio;
+
+  static Future<http.Response> get({required String url}) async {
+    try {
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {'Content-Type': 'application/json'},
+      );
+      return response;
+    } catch (e) {
+      throw ServerException(message: Constants.errorMessage);
+    }
+  }
+
   static Future<http.Response> post({required String url, Map<String, dynamic>? newBody}) async {
     final Map<String, dynamic> body = {};
     if (newBody != null) {
@@ -38,54 +54,30 @@ class ApiServices {
     }
   }
 
-  static Future uploadAsset(
-      {required FilePickerResult filePicker,
-      required String path,
-      required String folderId,
-      required void Function(double, int, int) onProgress}) async {
+  Future<void> addSayings({
+    required FilePickerResult filePicker,
+    required String text,
+  }) async {
     try {
-      for (int i = 0; i < filePicker.files.length; i++) {
-        final file = File(filePicker.files[i].path!);
-        final totalBytes = file.lengthSync();
-        final url = Uri.parse('${Constants.uploadFile}$folderId');
-        final request = http.MultipartRequest('POST', url);
-        final byteStream = file.openRead();
+      final file = filePicker.files.first;
+      String fileName = basename(file.name);
+      String filePath = file.path!;
+      FormData formData = FormData.fromMap({
+        "image": await MultipartFile.fromFile(filePath, filename: fileName),
+        "text": text,
+      });
+      final response = await _dio.post(
+        Constants.addSayings,
+        data: formData,
+        options: Options(
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        ),
+      );
 
-        double uploadedBytes = 0;
-
-        // MIME type detection
-        String? mimeType = lookupMimeType(file.path);
-        var mediaType =
-            mimeType != null ? MediaType.parse(mimeType) : MediaType('application', 'octet-stream');
-
-        final uploadByteStream = byteStream.transform(
-          StreamTransformer<List<int>, List<int>>.fromHandlers(
-            handleData: (data, sink) {
-              uploadedBytes += data.length;
-              double progress = uploadedBytes / totalBytes;
-              onProgress(progress, filePicker.files.length, i);
-              sink.add(data);
-            },
-          ),
-        );
-
-        request.fields['folderPath'] = path;
-        request.files.add(
-          http.MultipartFile(
-            'file',
-            uploadByteStream,
-            totalBytes,
-            filename: file.path.split('/').last,
-            contentType: mediaType,
-          ),
-        );
-
-        final response = await request.send();
-
-        if (response.statusCode != 201) {
-          final body = await response.stream.bytesToString();
-          throw ServerException(message: jsonDecode(body)['message']);
-        }
+      if (response.statusCode != 201) {
+        throw ServerException(message: response.data['message']);
       }
     } on ServerException catch (e) {
       throw ServerException(message: e.message);
@@ -94,42 +86,45 @@ class ApiServices {
     }
   }
 
-  // }
-  static Future<void> ss({
+  Future<void> uploadAsset({
     required FilePickerResult filePicker,
     required String path,
     required String folderId,
-    required void Function(double, int, int) onProgress,
+    required void Function(double progress, int sent, int total) onProgress,
   }) async {
     try {
-      var uri = Uri.parse("${Constants.uploadFile}$folderId");
+      for (int i = 0; i < filePicker.files.length; i++) {
+        String? mimeType = lookupMimeType(filePicker.files[i].path!);
+        var mediaType =
+            mimeType != null ? MediaType.parse(mimeType) : MediaType('application', 'octet-stream');
+        String fileName = basename(filePicker.files[i].name);
+        String filePath = filePicker.files[i].path!;
+        FormData formData = FormData.fromMap({
+          "file": await MultipartFile.fromFile(filePath, filename: fileName, contentType: mediaType),
+          "folderPath": path,
+        });
+        final response = await _dio.post(
+          "${Constants.uploadFile}$folderId",
+          onSendProgress: (count, total) {
+            double progress = count / total;
+            onProgress(progress, i, filePicker.files.length);
+          },
+          data: formData,
+          options: Options(
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          ),
+        );
 
-      var request = http.MultipartRequest('POST', uri);
-
-      // Get the file's MIME type
-      String? mimeType = lookupMimeType(filePicker.files.first.path!);
-
-      // Attach the file
-      var fileStream = http.MultipartFile.fromBytes(
-        'file',
-        await File(filePicker.files.first.path!).readAsBytes(),
-        filename: basename(filePicker.files.first.path!),
-        contentType: mimeType != null ? MediaType.parse(mimeType) : null,
-      );
-
-      request.files.add(fileStream);
-
-      // Send request
-      var response = await request.send();
-
-      // Read response
-      if (response.statusCode == 201) {
-        print("File uploaded successfully");
-      } else {
-        print("Upload failed: ${response.statusCode}");
+        if (response.statusCode != 201) {
+          throw ServerException(message: response.data['message']);
+        }
       }
+    } on ServerException catch (e) {
+      throw ServerException(message: e.message);
     } catch (e) {
-      print("Error uploading file: $e");
+      throw ServerException(message: Constants.errorMessage);
     }
   }
 }

@@ -17,10 +17,10 @@ class Folder {
   factory Folder.fromJson(Map<String, dynamic> json) {
     final content = json['contents'] as List<dynamic>;
     return Folder(
-      folderId: json['folderId'] as String,
-      folderName: json['folderName'] as String,
-      folderPath: json['folderPath'] as String,
-      folderType: json['folderType'] as String,
+      folderId: json['folderId'] ?? '',
+      folderName: json['folderName'] ?? '',
+      folderPath: json['folderPath'] ?? '',
+      folderType: json['folderType'] ?? '',
       folderContent: content.map((c) => FolderContent.fromJson(c)).toList(),
     );
   }
