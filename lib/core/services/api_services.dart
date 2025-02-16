@@ -57,15 +57,19 @@ class ApiServices {
   Future<void> addSayings({
     required FilePickerResult filePicker,
     required String text,
+    required String publishDate,
   }) async {
     try {
       final file = filePicker.files.first;
       String fileName = basename(file.name);
       String filePath = file.path!;
+
       FormData formData = FormData.fromMap({
         "image": await MultipartFile.fromFile(filePath, filename: fileName),
         "text": text,
+        "publishDate": publishDate,
       });
+
       final response = await _dio.post(
         Constants.addSayings,
         data: formData,
@@ -77,11 +81,14 @@ class ApiServices {
       );
 
       if (response.statusCode != 201) {
-        throw ServerException(message: response.data['message']);
+        throw ServerException(message: response.data['message'] ?? "Unknown error");
       }
+
+      return;
     } on ServerException catch (e) {
       throw ServerException(message: e.message);
     } catch (e) {
+      // Handle other exceptions
       throw ServerException(message: Constants.errorMessage);
     }
   }

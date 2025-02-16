@@ -12,10 +12,21 @@ class SayingBloc extends Bloc<SayingEvent, SayingState> {
   SayingBloc(this._sayingsRemoteDataSource) : super(SayingInitial()) {
     on<AddSayingEvent>(_addSaying);
     on<GetSayingEvent>(_getSayings);
+    on<DeleteSayingsEvent>(_deleteSayings);
   }
   void _addSaying(AddSayingEvent event, Emitter emit) async {
     emit(AddSayingLoading());
-    final result = await _sayingsRemoteDataSource.addSaying(filePicker: event.filePicker, text: event.text);
+    final result = await _sayingsRemoteDataSource.addSaying(
+        filePicker: event.filePicker, text: event.text, publishDate: event.publishDate);
+    result.fold(
+      (error) => emit(AddSayingFail(message: error.message)),
+      (_) => emit(AddSayingSuccess()),
+    );
+  }
+
+  void _deleteSayings(DeleteSayingsEvent event, Emitter emit) async {
+    emit(AddSayingLoading());
+    final result = await _sayingsRemoteDataSource.deleteSaying(id: event.id);
     result.fold(
       (error) => emit(AddSayingFail(message: error.message)),
       (_) => emit(AddSayingSuccess()),

@@ -7,7 +7,6 @@ import 'package:pope_desktop/core/error/failure.dart';
 import 'package:pope_desktop/core/services/api_services.dart';
 import 'package:pope_desktop/core/util/constants.dart';
 import 'package:pope_desktop/features/sayings/data/models/saying_model.dart';
-import 'package:pope_desktop/features/sayings/ui/bloc/saying_bloc.dart';
 
 class SayingsRemoteDataSource {
   final ApiServices _api;
@@ -17,9 +16,21 @@ class SayingsRemoteDataSource {
   Future<Either<Failure, void>> addSaying({
     required FilePickerResult filePicker,
     required String text,
+    required String publishDate,
   }) async {
     try {
-      await _api.addSayings(filePicker: filePicker, text: text);
+      await _api.addSayings(filePicker: filePicker, text: text, publishDate: publishDate);
+      return right(null);
+    } on ServerException catch (e) {
+      return left(Failure(message: e.message));
+    }
+  }
+
+  Future<Either<Failure, void>> deleteSaying({
+    required String id,
+  }) async {
+    try {
+      await ApiServices.delete(url: Constants.deleteSayings + id);
       return right(null);
     } on ServerException catch (e) {
       return left(Failure(message: e.message));
