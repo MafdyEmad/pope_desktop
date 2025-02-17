@@ -81,10 +81,13 @@ class _MediaScreenState extends State<MediaScreen> {
                       TextFormField(
                         controller: _linkController,
                         validator: (value) {
-                          final regex = RegExp(r"(?:youtube\.com|youtu\.be).*?list=([a-zA-Z0-9_-]+)");
+                          final regex = RegExp(
+                            r'^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/(playlist\?|.*\?.*&?)list=([a-zA-Z0-9_-]+)(&.*)?$',
+                            caseSensitive: false,
+                          );
                           if (_linkController.text.trim().isEmpty) {
                             return 'برجاء اضافة لينك الفيديوهات';
-                          } ////////////////////////////////////////////////////////////!!
+                          }
                           if (regex.hasMatch(_linkController.text)) {
                             return ' برجاء ادخال لينك صالح';
                           }
@@ -332,8 +335,11 @@ class _MediaScreenState extends State<MediaScreen> {
     return ListTile(
       onTap: () {
         try {
-          launchUrl(Uri.parse(
-              '${Constants.displayFile}${widget.path.removeBaseRoute}/${widget.folderContent.first.name}'));
+          launchUrl(
+            Uri.parse(
+              widget.folderContent.first.name,
+            ),
+          );
         } catch (_) {}
       },
       title: Text(
