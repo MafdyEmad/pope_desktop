@@ -292,7 +292,6 @@ class _ExplorerScreenState extends State<ExplorerScreen> {
             }
             if (state is ExplorerExploreSuccess) {
               final content = state.folder.folderContent;
-              print(state.folder.folderType.toLowerCase());
               if (state.folder.folderType != MediaType.folder.name) {
                 return MediaScreen(
                     folderContent: content,
