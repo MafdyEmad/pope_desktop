@@ -79,16 +79,14 @@ class ApiServices {
           },
         ),
       );
+      print(response.statusCode);
 
       if (response.statusCode != 201) {
         throw ServerException(message: response.data['message'] ?? "Unknown error");
       }
-
-      return;
     } on ServerException catch (e) {
       throw ServerException(message: e.message);
     } catch (e) {
-      // Handle other exceptions
       throw ServerException(message: Constants.errorMessage);
     }
   }
